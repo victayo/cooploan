@@ -16,11 +16,17 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         DB::table('users')->insert([
-            'username' => 'admin',
+            'mainone_id' => 'MOCN00001',
             'firstname' => 'Admin',
+            'middlename' => 'Admin',
             'lastname' => 'Admin',
             'email' => 'admin@argon.com',
-            'password' => bcrypt('secret')
+            'dob' => '2020-01-01',
+            'password' => bcrypt('secret'),
+            'address' => 'No 2, lagos',
+            'state' => 'Lagos',
+            'city' => 'VI',
+            'country' => 'Nigeria'
         ]);
     }
 }
