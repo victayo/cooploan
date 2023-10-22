@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -10,7 +11,10 @@ class UserController extends Controller
      * Returns view for all users
      */
     public function index(){
-        return view("pages.users.index");
+        $users = User::all();
+        return view("pages.users.index", [
+            'users' => $users,
+        ]);
     }
 
     /**
@@ -24,14 +28,18 @@ class UserController extends Controller
      * Returns view to create a user
      */
     public function create(){
-        return view("pages.users.user-new");
+        $membershipFee = 2000; //todo: Get it from a settings field
+        $minAmountToSave = 5000; //todo: Get it from a settings field
+        return view("pages.users.user-new", [
+            'membership_fee' => $membershipFee,
+            'min_save_amount' => $minAmountToSave
+        ]);
     }
 
     /**
      * Creates a new user
      */
     public function store(Request $request){
-
     }
 
     /**

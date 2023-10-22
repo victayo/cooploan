@@ -13,7 +13,7 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $primaryKey = 'mainone_id';
-
+    protected $keyType = 'string';
     /**
      * The attributes that are mass assignable.
      *
@@ -61,5 +61,12 @@ class User extends Authenticatable
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = bcrypt($value);
+    }
+
+    public function getFullNameAttribute(){
+        if($this->attributes['middlename']){
+            return $this->attributes['firstname'] . " ". $this->attributes['middlename'] . " ".$this->attributes['lastname'];
+        }
+        return $this->attributes['firstname'] . " ".$this->attributes['lastname'];
     }
 }

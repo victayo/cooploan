@@ -361,24 +361,28 @@ textarea {
 }
 
 fieldset {
-    border: 0;
+    border: 1px solid black;
     margin: 0;
     min-width: 0;
     padding: 0
 }
 
 legend {
-    float: left;
-    font-size: calc(1.275rem + .3vw);
-    line-height: inherit;
-    margin-bottom: .5rem;
-    padding: 0;
-    width: 100%
+    font-size: inherit;
+    line-height: 30px;
+    font-weight: 600;
+    text-transform: uppercase;
+    /* color: #555; */
+    text-align: center;
 }
 
-@media(min-width: 1200px) {
+@media(max-width: 1200px) {
     legend {
-        font-size:1.5rem
+        /* font-size:small; */
+    }
+    fieldset{
+        /* border: 0; */
+        padding: 0;
     }
 }
 
