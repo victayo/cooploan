@@ -28,7 +28,8 @@ class DatabaseSeeder extends Seeder
             'state' => 'Lagos',
             'city' => 'VI',
             'country' => 'Nigeria',
-            'gender' => 'male'
+            'gender' => 'male',
+            'save_amount' => '5000'
         ]);
     }
 }

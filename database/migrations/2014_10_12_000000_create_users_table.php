@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('gender');
             $table->string('approval_status')->default('pending');
             $table->string('status')->default('active');
+            $table->decimal('save_amount');
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

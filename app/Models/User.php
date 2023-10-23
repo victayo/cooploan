@@ -34,7 +34,8 @@ class User extends Authenticatable
         'country',
         'gender',
         'approval_status',
-        'status'
+        'status',
+        'save_amount'
     ];
 
     /**
