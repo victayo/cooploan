@@ -51,7 +51,6 @@
                                         <td class="align-middle text-end">
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">
                                                 <p class="text-sm font-weight-bold mb-0">View</p>
-                                                <p class="text-sm font-weight-bold mb-0 ps-2">Edit</p>
                                                 <p class="text-sm font-weight-bold mb-0 ps-2">Delete</p>
                                             </div>
                                         </td>

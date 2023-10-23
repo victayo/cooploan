@@ -26,8 +26,12 @@ return new class extends Migration
             $table->string('city');
             $table->string('state');
             $table->string('country');
+            $table->string('gender');
+            $table->string('approval_status')->default('pending');
+            $table->string('status')->default('active');
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -27,7 +27,8 @@ class DatabaseSeeder extends Seeder
             'address' => 'No 2, lagos',
             'state' => 'Lagos',
             'city' => 'VI',
-            'country' => 'Nigeria'
+            'country' => 'Nigeria',
+            'gender' => 'male'
         ]);
     }
 }
