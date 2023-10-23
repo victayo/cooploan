@@ -35,7 +35,8 @@ class User extends Authenticatable
         'gender',
         'approval_status',
         'status',
-        'save_amount'
+        'save_amount',
+        'phone'
     ];
 
     /**

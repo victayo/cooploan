@@ -346,6 +346,7 @@
                             </div>
 
                             <div class="d-flex justify-content-end mt-4">
+                                <a class="btn bg-gradient-danger m-0 ms-2" href="{{route('users.index')}}">Cancel</a>
                                 <button type="submit" class="btn bg-gradient-primary m-0 ms-2">Save</button>
                             </div>
                         </form>

@@ -15,6 +15,11 @@ use Illuminate\Support\Str;
 class UserController extends Controller
 {
     /**
+     * @todo: This should be gotten from settings
+     */
+    private $membershipFee = 2000;
+    private $minAmountToSave = 5000;
+    /**
      * Returns view for all users
      */
     public function index(){
@@ -28,18 +33,24 @@ class UserController extends Controller
      * Shows a user
      */
     public function show($id){
-        return view("pages.users.show");
+        $user = User::where('mainone_id', $id)->first();
+        $employment = EmploymentDetails::where('mainone_id', $id)->first();
+        $nok = NextOfKin::where('mainone_id', $id)->first();
+        return view("pages.users.show", [
+            'user' => $user,
+            'employment' => $employment,
+            'nok' => $nok,
+            'min_save_amount' => $this->minAmountToSave
+        ]);
     }
 
     /**
      * Returns view to create a user
      */
     public function create(){
-        $membershipFee = 2000; //todo: Get it from a settings field
-        $minAmountToSave = 5000; //todo: Get it from a settings field
         return view("pages.users.user-new", [
-            'membership_fee' => $membershipFee,
-            'min_save_amount' => $minAmountToSave
+            'membership_fee' => $this->membershipFee,
+            'min_save_amount' => $this->minAmountToSave
         ]);
     }
 
@@ -47,8 +58,6 @@ class UserController extends Controller
      * Creates a new user
      */
     public function store(Request $request){
-        $minAmountToSave = 5000; //todo: Get it from a settings field
-
         $validated = $request->validate([
             'mainone_id' => 'required|unique:users,mainone_id',
             'firstname' => 'required|string',
@@ -68,7 +77,7 @@ class UserController extends Controller
             'job_title' => 'required|string',
             'how_long' => 'required|numeric|min:1', // not relevant. Should be calculated dynamically based on the resumption date
 
-            'save_amount' => "required|numeric|min:$minAmountToSave",
+            'save_amount' => "required|numeric|min:$this->minAmountToSave",
             'save_amount_words' => "required|string", // not relevant. Should be interpreted from the save amount
 
             'membership_fee' => 'required', // not required. This is a compulsory fee that should be stated. User has no input
@@ -77,7 +86,9 @@ class UserController extends Controller
             'nok_dob' => 'required',
             'nok_email' => 'required|email',
             'nok_phone' => 'required|string',
-            'nok_address' => 'required|string'
+            'nok_address' => 'required|string',
+
+            'consent' => 'required'
         ]);
 
         $password = Str::random(12);
@@ -126,10 +137,11 @@ class UserController extends Controller
             Mail::to($user->email)->send(new UserRegistration($user, $password));
 
             DB::commit();
-            return redirect()->route('users.index');
+            return redirect()->route('users.index')->with('success', 'user added');
         }catch(Exception $exception){
             DB::rollBack();
             report($exception);
+            return back()->withInput();
         }
     }
 
@@ -144,7 +156,65 @@ class UserController extends Controller
      * Edits a user
      */
     public function update($id, Request $request){
+        try{
+            $request->validate([
+                'firstname' => 'required|string',
+                'middlename' => 'string|nullable',
+                'lastname' => 'required|string',
+                'gender' => 'required',
+                'dob' => 'required',
+                'phone' => 'required|string',
+                'country' => 'required|string',
+                'state' => 'required|string',
+                'city' => 'required|string',
+                'address' => 'required|string',
 
+                'resumption_date' => 'required|date',
+                'department' => 'required|string',
+                'job_title' => 'required|string',
+                // 'how_long' => 'required|numeric|min:1', // not relevant. Should be calculated dynamically based on the resumption date
+
+                'save_amount' => "required|numeric|min:$this->minAmountToSave",
+                // 'save_amount_words' => "required|string", // not relevant. Should be interpreted from the save amount
+
+                // 'membership_fee' => 'required', // not required. This is a compulsory fee that should be stated. User has no input
+                'nok_firstname' => 'required|string',
+                'nok_lastname' => 'required|string',
+                'nok_dob' => 'required',
+                'nok_email' => 'required|email',
+                'nok_phone' => 'required|string',
+                'nok_address' => 'required|string'
+            ]);
+
+            User::where('mainone_id', $id)->update([
+                'mainone_id' => $request->post('mainone_id'),
+                'firstname' => $request->post('firstname'),
+                'middlename' => $request->post('middlename'),
+                'lastname' => $request->post('lastname'),
+                'gender' => $request->post('gender'),
+                'dob' => $request->post('dob'),
+                'email' => $request->post('email'),
+                'phone' => $request->post('phone'),
+                'country' => $request->post('country'),
+                'state' => $request->post('state'),
+                'city' => $request->post('city'),
+                'address' => $request->post('address'),
+                'save_amount' => $request->post('save_amount')
+            ]);
+
+
+            EmploymentDetails::where('mainone_id', $id)->update([
+                'mainone_id' => $request->post('mainone_id'),
+                'department' => $request->post('department'),
+                'resumption_date' => $request->post('resumption_date'),
+                'job_title' => $request->post('job_title')
+            ]);
+
+            return redirect()->route('users.show', $id)->with('success', 'Successfully updated user');
+        }catch(Exception $exception){
+            report($exception);
+            return redirect()->route('users.show', $id)->with('error', $exception->getMessage());
+        }
     }
 
     /**
