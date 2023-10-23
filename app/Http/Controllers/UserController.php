@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\UserRegistration;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class UserController extends Controller
@@ -90,7 +92,10 @@ class UserController extends Controller
             'password' => $password
         ]);
 
-        dd($user);
+        /**
+         * @todo move to queue
+         */
+        Mail::to($user->email)->send(new UserRegistration($user, $password));
     }
 
     /**
