@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\UserRegistration;
+use App\Models\EmploymentDetails;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -76,6 +77,8 @@ class UserController extends Controller
         ]);
 
         $password = Str::random(12);
+
+        // Save user details
         $user = User::create([
             'mainone_id' => $request->post('mainone_id'),
             'firstname' => $request->post('firstname'),
@@ -91,6 +94,16 @@ class UserController extends Controller
             'address' => $request->post('address'),
             'password' => $password
         ]);
+
+        // save employment details
+        $employmentDetails = EmploymentDetails::create([
+            'mainone_id' => $request->post('mainone_id'),
+            'department' => $request->post('department'),
+            'resumption_date' => $request->post('resumption_date'),
+            'job_title' => $request->post('job_title')
+        ]);
+
+        dd($employmentDetails);
 
         /**
          * @todo move to queue
