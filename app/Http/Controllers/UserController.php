@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Mail\UserRegistration;
 use App\Models\EmploymentDetails;
+use App\Models\NextOfKin;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
@@ -63,52 +66,71 @@ class UserController extends Controller
             'resumption_date' => 'required|date',
             'department' => 'required|string',
             'job_title' => 'required|string',
-            'how_long' => 'required|numeric|min:1',
+            'how_long' => 'required|numeric|min:1', // not relevant. Should be calculated dynamically based on the resumption date
 
             'save_amount' => "required|numeric|min:$minAmountToSave",
-            'save_amount_words' => "required|string",
+            'save_amount_words' => "required|string", // not relevant. Should be interpreted from the save amount
 
-            'membership_fee' => 'required',
+            'membership_fee' => 'required', // not required. This is a compulsory fee that should be stated. User has no input
             'nok_firstname' => 'required|string',
             'nok_lastname' => 'required|string',
             'nok_dob' => 'required',
             'nok_email' => 'required|email',
             'nok_phone' => 'required|string',
+            'nok_address' => 'required|string'
         ]);
 
         $password = Str::random(12);
 
-        // Save user details
-        $user = User::create([
-            'mainone_id' => $request->post('mainone_id'),
-            'firstname' => $request->post('firstname'),
-            'middlename' => $request->post('middlename'),
-            'lastname' => $request->post('lastname'),
-            'gender' => $request->post('gender'),
-            'dob' => $request->post('dob'),
-            'email' => $request->post('email'),
-            'phone' => $request->post('phone'),
-            'country' => $request->post('country'),
-            'state' => $request->post('state'),
-            'city' => $request->post('city'),
-            'address' => $request->post('address'),
-            'password' => $password
-        ]);
+        try{
+            DB::beginTransaction();
+            // Save user details
+            $user = User::create([
+                'mainone_id' => $request->post('mainone_id'),
+                'firstname' => $request->post('firstname'),
+                'middlename' => $request->post('middlename'),
+                'lastname' => $request->post('lastname'),
+                'gender' => $request->post('gender'),
+                'dob' => $request->post('dob'),
+                'email' => $request->post('email'),
+                'phone' => $request->post('phone'),
+                'country' => $request->post('country'),
+                'state' => $request->post('state'),
+                'city' => $request->post('city'),
+                'address' => $request->post('address'),
+                'password' => $password,
+                'save_amount' => $request->post('save_amount')
+            ]);
 
-        // save employment details
-        $employmentDetails = EmploymentDetails::create([
-            'mainone_id' => $request->post('mainone_id'),
-            'department' => $request->post('department'),
-            'resumption_date' => $request->post('resumption_date'),
-            'job_title' => $request->post('job_title')
-        ]);
+            // save employment details
+            EmploymentDetails::create([
+                'mainone_id' => $request->post('mainone_id'),
+                'department' => $request->post('department'),
+                'resumption_date' => $request->post('resumption_date'),
+                'job_title' => $request->post('job_title')
+            ]);
 
-        dd($employmentDetails);
+            // Save next of kin details
+            NextOfKin::create([
+                'mainone_id' => $request->post('mainone_id'),
+                'firstname' => $request->post('nok_firstname'),
+                'lastname' => $request->post('nok_lastname'),
+                'dob' => $request->post('nok_dob'),
+                'email' => $request->post('nok_email'),
+                'phone' => $request->post('nok_phone'),
+                'address' => $request->post('nok_address')
+            ]);
+            /**
+             * @todo move to queue
+             */
+            Mail::to($user->email)->send(new UserRegistration($user, $password));
 
-        /**
-         * @todo move to queue
-         */
-        Mail::to($user->email)->send(new UserRegistration($user, $password));
+            DB::commit();
+            return redirect()->route('users.index');
+        }catch(Exception $exception){
+            DB::rollBack();
+            report($exception);
+        }
     }
 
     /**

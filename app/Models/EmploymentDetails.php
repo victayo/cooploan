@@ -9,5 +9,7 @@ class EmploymentDetails extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'mainone_id';
+    protected $keyType = 'string';
     protected $guarded = [];
 }
