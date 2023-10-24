@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('next_of_kin', function (Blueprint $table) {
             $table->id();
-            $table->string('mainone_id');
-            $table->string('firstname');
-            $table->string('lastname');
+            $table->string('mainone_id', 20);
+            $table->string('firstname', 30);
+            $table->string('lastname', 30);
             $table->date('dob');
-            $table->string('email');
+            $table->string('email', 30);
             $table->string('address');
-            $table->string('phone');
+            $table->string('phone', 15);
             $table->timestamps();
 
             $table->foreign('mainone_id')->references('mainone_id')->on('users')->onDelete('cascade');

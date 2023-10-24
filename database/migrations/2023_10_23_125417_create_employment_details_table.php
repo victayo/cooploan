@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('employment_details', function (Blueprint $table) {
-            $table->string('mainone_id')->primary();
-            $table->string('department');
+            $table->string('mainone_id', 20)->primary();
+            $table->string('department', 30);
             $table->date('resumption_date');
-            $table->string('job_title');
+            $table->string('job_title', 30);
             $table->timestamps();
             $table->foreign('mainone_id')->references('mainone_id')->on('users')->onDelete('cascade');
         });

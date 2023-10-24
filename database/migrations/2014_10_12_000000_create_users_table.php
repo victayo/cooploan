@@ -14,22 +14,25 @@ return new class extends Migration
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->string('mainone_id')->primary();
-            $table->string('firstname');
-            $table->string('middlename')->nullable();
-            $table->string('lastname');
-            $table->string('email')->unique();
+            $table->string('mainone_id', 20)->primary();
+            $table->string('firstname', 30);
+            $table->string('middlename', 30)->nullable();
+            $table->string('lastname', 30);
+            $table->string('email', 30)->unique();
+            $table->string('phone', 15);
             $table->timestamp('email_verified_at')->nullable();
             $table->date('dob');
             $table->string('password');
             $table->string('address');
-            $table->string('city');
-            $table->string('state');
-            $table->string('country');
-            $table->string('gender');
-            $table->string('approval_status')->default('pending');
-            $table->string('status')->default('active');
+            $table->string('city', 15);
+            $table->string('state', 15);
+            $table->string('country', 15);
+            $table->string('gender', 10);
+            $table->string('approval_status', 10)->default('pending');
+            $table->string('status', 10)->default('active');
             $table->decimal('save_amount');
+            $table->decimal('membership_fee');
+            $table->timestamp('date_approved')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
