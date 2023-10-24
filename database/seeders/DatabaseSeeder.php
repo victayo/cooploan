@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\EmploymentDetails;
+use App\Models\NextOfKin;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -16,12 +18,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        $mainoneId = 'MOCN00001';
         User::create([
-            'mainone_id' => 'MOCN00001',
-            'firstname' => 'Admin',
+            'mainone_id' => $mainoneId,
+            'firstname' => 'Joseph',
             'middlename' => 'Admin',
-            'lastname' => 'Admin',
-            'email' => 'admin@argon.com',
+            'lastname' => 'Uaboi',
+            'email' => 'joe@mcoop.com',
+            'phone' => '07030000000',
             'dob' => '2020-01-01',
             'password' => 'secret',
             'address' => 'No 2, lagos',
@@ -29,7 +33,25 @@ class DatabaseSeeder extends Seeder
             'city' => 'VI',
             'country' => 'Nigeria',
             'gender' => 'male',
-            'save_amount' => '5000'
+            'save_amount' => 5000,
+            'membership_fee' => 2000
+        ]);
+
+        EmploymentDetails::create([
+            'mainone_id' => $mainoneId,
+            'department' => 'Finance',
+            'resumption_date' => '2018-01-01',
+            'job_title' => 'Credit Control'
+        ]);
+
+        NextOfKin::create([
+            'mainone_id' => $mainoneId,
+            'firstname' => 'Chiamaka',
+            'lastname' => 'Justine',
+            'dob' => '2020-01-01',
+            'email' => 'ChiJus@gmail.com',
+            'phone' => '07030111111',
+            'address' => 'Excelad Estate'
         ]);
     }
 }
