@@ -16,7 +16,7 @@
                             {{ $user->fullName }}
                         </h5>
                         <p class="mb-0 font-weight-bold text-sm">
-                            {{$employment->job_title}}, {{$employment->department}}
+                            {{$employment->job_title ?? ''}}, {{$employment->department ?? ''}}
                         </p>
                     </div>
                 </div>
@@ -186,7 +186,7 @@
                                     <label class="form-label mt-md-4">Resumption Date</label>
                                     <div class="input-group">
                                         <input id="resumption_date" name="resumption_date" class="form-control @error('resumption_date') is-invalid @enderror"
-                                            type="date" value="{{ old('resumption_date', $employment->resumption_date) }}"  required>
+                                            type="date" value="{{ old('resumption_date', $employment->resumption_date ?? '') }}"  required>
                                         @error('resumption_date')
                                             <div class="invalid-feedback">
                                                 {{$message}}
@@ -198,7 +198,7 @@
                                     <label class="form-label mt-4">Department</label>
                                     <div class="input-group">
                                         <input id="department" name="department" class="form-control @error('department') is-invalid @enderror" type="text"
-                                            value="{{ old('department', $employment->department) }}" required>
+                                            value="{{ old('department', $employment->department ?? '') }}" required>
                                         @error('department')
                                             <div class="invalid-feedback">
                                                 {{$message}}
@@ -210,7 +210,7 @@
                                     <label class="form-label mt-4">Job Title</label>
                                     <div class="input-group">
                                         <input id="job_title" name="job_title" class="form-control @error('job_title') is-invalid @enderror" type="text"
-                                            value="{{ old('job_title', $employment->job_title) }}" required>
+                                            value="{{ old('job_title', $employment->job_title ?? '') }}" required>
                                         @error('job_title')
                                             <div class="invalid-feedback">
                                                 {{$message}}
@@ -227,13 +227,13 @@
                                         <label class="form-label mt-4">First Name</label>
                                         <div class="input-group">
                                             <input id="nok_firstname" name="nok_firstname" class="form-control @error('nok_firstname') is-invalid @enderror"
-                                                type="text" value="{{ old('nok_firstname', $nok->firstname) }}" required>
+                                                type="text" value="{{ old('nok_firstname', $nok->firstname ?? '') }}" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-sm-12">
                                         <label class="form-label mt-4">Last Name</label>
                                         <div class="input-group">
-                                            <input id="nok_lastname" name="nok_lastname" class="form-control @error('nok_lastname') is-invalid @enderror" type="text" value="{{ old('nok_lastname', $nok->lastname) }}" required>
+                                            <input id="nok_lastname" name="nok_lastname" class="form-control @error('nok_lastname') is-invalid @enderror" type="text" value="{{ old('nok_lastname', $nok->lastname ?? '') }}" required>
                                         </div>
                                     </div>
                                 </div>
@@ -242,19 +242,19 @@
                                     <div class="col-md-4 col-sm-12">
                                         <label class="form-label mt-md-4">Date of birth</label>
                                         <div class="input-group">
-                                            <input id="nok_dob" name="nok_dob" class="form-control @error('nok_dob') is-invalid @enderror" type="date" value="{{ old('nok_dob', $nok->dob) }}" required>
+                                            <input id="nok_dob" name="nok_dob" class="form-control @error('nok_dob') is-invalid @enderror" type="date" value="{{ old('nok_dob', $nok->dob ?? '') }}" required>
                                         </div>
                                     </div>
                                     <div class="col-md-4 col-sm-12">
                                         <label class="form-label mt-4">Email Address</label>
                                         <div class="input-group">
-                                            <input id="nok_email" name="nok_email" class="form-control @error('nok_email') is-invalid @enderror" type="email" value="{{ old('nok_email', $nok->email) }}" required>
+                                            <input id="nok_email" name="nok_email" class="form-control @error('nok_email') is-invalid @enderror" type="email" value="{{ old('nok_email', $nok->email ?? '') }}" required>
                                         </div>
                                     </div>
                                     <div class="col-md-4 col-sm-12">
                                         <label class="form-label mt-4">Phone</label>
                                         <div class="input-group">
-                                            <input id="nok_phone" name="nok_phone" class="form-control @error('nok_phone') is-invalid @enderror" type="tel" value="{{ old('nok_phone', $nok->phone) }}" required>
+                                            <input id="nok_phone" name="nok_phone" class="form-control @error('nok_phone') is-invalid @enderror" type="tel" value="{{ old('nok_phone', $nok->phone ?? '') }}" required>
                                         </div>
                                     </div>
                                 </div>
@@ -263,7 +263,7 @@
                                     <div class="col-12">
                                         <label class="form-label">Address</label>
                                         <div class="input-group">
-                                            <textarea rows="3" name="nok_address" class="form-control @error('nok_address') is-invalid @enderror" value="{{ old('nok_address', $nok->address) }}" required></textarea>
+                                            <textarea rows="3" name="nok_address" class="form-control @error('nok_address') is-invalid @enderror" value="{{ old('nok_address', $nok->address ?? '`') }}" required></textarea>
                                             @error('nok_address')
                                                 <div class="invalid-feedback">
                                                     {{$message}}

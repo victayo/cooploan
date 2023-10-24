@@ -18,7 +18,7 @@ class UserController extends Controller
      * @todo: This should be gotten from settings
      */
     private $membershipFee = 2000;
-    private $minAmountToSave = 5000;
+    private $minAmountToSave = 2000;
     /**
      * Returns view for all users
      */
@@ -75,12 +75,9 @@ class UserController extends Controller
             'resumption_date' => 'required|date',
             'department' => 'required|string',
             'job_title' => 'required|string',
-            'how_long' => 'required|numeric|min:1', // not relevant. Should be calculated dynamically based on the resumption date
 
             'save_amount' => "required|numeric|min:$this->minAmountToSave",
-            'save_amount_words' => "required|string", // not relevant. Should be interpreted from the save amount
 
-            'membership_fee' => 'required', // not required. This is a compulsory fee that should be stated. User has no input
             'nok_firstname' => 'required|string',
             'nok_lastname' => 'required|string',
             'nok_dob' => 'required',
@@ -110,7 +107,8 @@ class UserController extends Controller
                 'city' => $request->post('city'),
                 'address' => $request->post('address'),
                 'password' => $password,
-                'save_amount' => $request->post('save_amount')
+                'save_amount' => $request->post('save_amount'),
+                'membership_fee' => $this->membershipFee
             ]);
 
             // save employment details
@@ -137,7 +135,7 @@ class UserController extends Controller
             Mail::to($user->email)->send(new UserRegistration($user, $password));
 
             DB::commit();
-            return redirect()->route('users.index')->with('success', 'user added');
+            return redirect()->route('users.index')->with('success', 'User successfully added!');
         }catch(Exception $exception){
             DB::rollBack();
             report($exception);
@@ -157,6 +155,7 @@ class UserController extends Controller
      */
     public function update($id, Request $request){
         try{
+            DB::beginTransaction();
             $request->validate([
                 'firstname' => 'required|string',
                 'middlename' => 'string|nullable',
@@ -172,12 +171,9 @@ class UserController extends Controller
                 'resumption_date' => 'required|date',
                 'department' => 'required|string',
                 'job_title' => 'required|string',
-                // 'how_long' => 'required|numeric|min:1', // not relevant. Should be calculated dynamically based on the resumption date
 
                 'save_amount' => "required|numeric|min:$this->minAmountToSave",
-                // 'save_amount_words' => "required|string", // not relevant. Should be interpreted from the save amount
 
-                // 'membership_fee' => 'required', // not required. This is a compulsory fee that should be stated. User has no input
                 'nok_firstname' => 'required|string',
                 'nok_lastname' => 'required|string',
                 'nok_dob' => 'required',
@@ -210,9 +206,11 @@ class UserController extends Controller
                 'job_title' => $request->post('job_title')
             ]);
 
+            DB::commit();
             return redirect()->route('users.show', $id)->with('success', 'Successfully updated user');
         }catch(Exception $exception){
             report($exception);
+            DB::rollBack();
             return redirect()->route('users.show', $id)->with('error', $exception->getMessage());
         }
     }

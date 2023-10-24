@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -36,7 +37,9 @@ class User extends Authenticatable
         'approval_status',
         'status',
         'save_amount',
-        'phone'
+        'phone',
+        'membership_fee',
+        'date_approved'
     ];
 
     /**

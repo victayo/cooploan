@@ -176,7 +176,7 @@
                             <fieldset class="mt-4 p-3">
                                 <legend>EMPLOYMENT INFORMATION</legend>
                                 <div class="row">
-                                    <div class="col-md-3 col-sm-12">
+                                    <div class="col-md-4 col-sm-12">
                                         <label class="form-label mt-md-4">Resumption Date</label>
                                         <div class="input-group">
                                             <input id="resumption_date" name="resumption_date" class="form-control @error('resumption_date') is-invalid @enderror"
@@ -189,7 +189,7 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="col-md-3 col-sm-12">
+                                    <div class="col-md-4 col-sm-12">
                                         <label class="form-label mt-4">Department</label>
                                         <div class="input-group">
                                             <input id="department" name="department" class="form-control @error('department') is-invalid @enderror" type="text"
@@ -201,24 +201,12 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="col-md-3 col-sm-12">
+                                    <div class="col-md-4 col-sm-12">
                                         <label class="form-label mt-4">Job Title</label>
                                         <div class="input-group">
                                             <input id="job_title" name="job_title" class="form-control @error('job_title') is-invalid @enderror" type="text"
                                                 value="{{ old('job_title') }}" onfocus="focused(this)" onfocusout="defocused(this)" required>
                                             @error('job_title')
-                                                <div class="invalid-feedback">
-                                                    {{$message}}
-                                                </div>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 col-sm-12">
-                                        <label class="form-label mt-4">How Long?</label>
-                                        <div class="input-group">
-                                            <input id="how_long" name="how_long" class="form-control @error('how_long') is-invalid @enderror" type="number" min="1"
-                                                value="{{ old('how_long') }}" onfocus="focused(this)" onfocusout="defocused(this)" required>
-                                            @error('how_long')
                                                 <div class="invalid-feedback">
                                                     {{$message}}
                                                 </div>
@@ -231,7 +219,7 @@
                             <fieldset class="mt-4 p-3">
                                 <legend>AUTHORITY TO DEBIT MY SALARY ACCOUNT AS FOLLOWS</legend>
                                 <div class="row">
-                                    <div class="col-md-4 col-sm-12">
+                                    <div class="col-md-6 col-sm-12">
                                         <label class="form-label mt-md-4">Monthly Savings</label>
                                         <div class="input-group">
                                             <span class="input-group-text">NGN</span>
@@ -243,33 +231,8 @@
                                              @enderror
                                         </div>
                                     </div>
-                                    <div class="col-md-4 col-sm-12">
-                                        <label class="form-label mt-4">Monthly Savings (Amount in words)</label>
-                                        <div class="input-group">
-                                            <input id="save_amount_words" name="save_amount_words" class="form-control @error('save_amount_words') is-invalid @enderror" type="text"
-                                                value="{{ old('job_title') }}" onfocus="focused(this)" onfocusout="defocused(this)" required>
-                                            @error('save_amount_words')
-                                                <div class="invalid-feedback">
-                                                    {{$message}}
-                                                </div>
-                                             @enderror
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 col-sm-12">
-                                        <label class="form-label mt-4">Membership/Entrance Fee:
-                                            N{{ $membership_fee }}</label>
-                                        <div class="input-group">
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="membership_fee"
-                                                    id="membership_fee_yes" value="yes" checked>
-                                                <label class="form-check-label" for="membership_fee_yes">Yes</label>
-                                            </div>
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="membership_fee"
-                                                    id="membership_fee_no" value="no">
-                                                <label class="form-check-label" for="membership_fee_no">No</label>
-                                            </div>
-                                        </div>
+                                    <div class="mt-2">
+                                        <strong class="text-sm text-danger text-monospace">A Membership/Entrance Fee of NGN{{ $membership_fee }} will be charged. This is a one-time payment.</strong>
                                     </div>
                                 </div>
                             </fieldset>
@@ -338,7 +301,7 @@
 
                             <div class="row mt-4">
                                 <div class="form-check col-12">
-                                    <input id="consent" class="form-check-input" type="checkbox" value="{{ old('consent') }}" name="consent" required>
+                                    <input id="consent" class="form-check-input" type="checkbox" value="true" name="consent" required>
                                     <label class="form-check-label" for="consent">
                                         I confirm that the information provided in this form is accurate and complete.
                                     </label>
