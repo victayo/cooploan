@@ -13,9 +13,12 @@ const app = createApp({});
 
 import ExampleComponent from './components/ExampleComponent.vue';
 import UserSummaryComponent from './components/UserSummaryComponent.vue';
+import NewLoanComponent from './components/loan/NewLoanComponent.vue'
+
 
 app.component('example-component', ExampleComponent);
 app.component('user-summary', UserSummaryComponent);
+app.component('new-loan', NewLoanComponent);
 
 /**
  * The following block of code may be used to automatically register your

@@ -24,6 +24,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\ResetPassword;
 use App\Http\Controllers\ChangePassword;
+use App\Http\Controllers\LoanController;
 use App\Http\Controllers\UserController;
 
 Route::get('/', function () {return redirect('/dashboard');})->middleware('auth');
@@ -54,6 +55,16 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/{user}/edit', 'edit')->name('users.edit');
         Route::post('/{user}/edit', 'update')->name('users.update');
         Route::delete('/{user}', 'delete')->name('users.delete');
+    });
+
+    Route::controller(LoanController::class)->prefix('loans')->group(function(){
+        Route::get('/', 'index')->name('loans.index');
+        Route::get('/create', 'create')->name('loans.create');
+        Route::post('/', 'store')->name('loans.store');
+        Route::get('/{loan}', 'show')->name('loans.show');
+        Route::get('/{loan}/edit', 'edit')->name('loans.edit');
+        Route::post('{loan}/edit', 'update')->name('loans.update');
+        Route::delete('/{loan}', 'delete')->name('loans.delete');
     });
 
     Route::get('/{page}', [PageController::class, 'index'])->name('page');
