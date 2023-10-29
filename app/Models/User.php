@@ -78,4 +78,8 @@ class User extends Authenticatable
         }
         return $this->attributes['firstname'] . " ".$this->attributes['lastname'];
     }
+
+    public function wallet(){
+        return $this->hasOne(Wallet::class, 'user_id', 'mainone_id');
+    }
 }

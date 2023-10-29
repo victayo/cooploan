@@ -59,7 +59,7 @@
                                                     </a>
                                                 </p>
                                                 <p class="text-sm font-weight-bold mb-0 ps-2">
-                                                    <a class="btn bg-gradient-faded-warning btn-sm m-0 ms-2" href="{{route('loans.edit', $loan->id)}}">
+                                                    <a class="btn btn-info btn-sm m-0 ms-2" href="{{route('loans.edit', $loan->id)}}">
                                                         <i class="fa fa-pen text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="" aria-hidden="true" data-bs-original-title="Edit Loan" aria-label="Edit Loan"></i>
                                                     </a>
                                                 </p>

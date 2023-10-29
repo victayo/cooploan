@@ -28,7 +28,7 @@ class LoanController extends Controller
     public function create()
     {
         $user = auth()->user();
-        $users = User::where('mainone_id', '!=', $user->mainone_id)->get();
+        $users = User::with('wallet')->where('mainone_id', '!=', $user->mainone_id)->get();
         return view('pages.loans.loan-new', [
             'users' => $users
         ]);
@@ -40,8 +40,12 @@ class LoanController extends Controller
     public function store(Request $request)
     {
         try{
+            /**
+             * @todo Validate request
+             */
             $guarantors = $request->post('guarantors');
             $loan = $request->post('loan');
+            $removeGuarantors = $request->post('remove');
 
             DB::beginTransaction();
             $loanData = [
@@ -64,6 +68,7 @@ class LoanController extends Controller
              * @todo Notify Guarantors
              */
             foreach($guarantors as $guarantor){
+                //Insert or update LoanGuarantors
                 if($guarantor['id']){
                     LoanGuarantor::where('id', $guarantor['id'])->update([
                         'guarantor_id' => $guarantor['guarantor_id'],
@@ -78,6 +83,12 @@ class LoanController extends Controller
                     ]);
                 }
             }
+
+            if(!empty($removeGuarantors)){
+                //delete LoanGuarantors
+                LoanGuarantor::whereIn('id', $removeGuarantors)->delete();
+            }
+
             DB::commit();
             $loanGuarantors = LoanGuarantor::where('loan_id', $loan->id)->get();
             return response()->json(['status' => 'success', 'loan' => $loan, 'loan_guarantors' => $loanGuarantors]);
@@ -104,7 +115,7 @@ class LoanController extends Controller
         $loan = Loan::where('id', $loan->id)->first();
         $guarantors = LoanGuarantor::where('loan_id', $loan->id)->get();
         $user = auth()->user();
-        $users = User::where('mainone_id', '!=', $user->mainone_id)->get();
+        $users = User::with('wallet')->where('mainone_id', '!=', $user->mainone_id)->get();
 
         return view('pages.loans.loan-edit', [
             'users' => $users,

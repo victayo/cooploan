@@ -56,7 +56,8 @@
                     </div>
                 </fieldset>
 
-                <div class="d-flex justify-content-end">
+                <div class="d-flex justify-content-end mt-4">
+                    <a class="btn bg-gradient-danger m-0 ms-2" href="/loans">Cancel</a>
                     <button type="submit" class="btn bg-gradient-primary m-0 ms-2">Save</button>
                 </div>
             </form>
@@ -93,6 +94,7 @@ export default {
         return {
             loan: _.cloneDeep(this.initialLoan),
             guarantors: _.cloneDeep(this.initialGuarantors),
+            removeGuarantors: []
         }
     },
 
@@ -111,24 +113,17 @@ export default {
             let guarantor = this.guarantors[index];
             if(guarantor.id){
                 if(window.confirm('Are you sure you want to remove this Guarantor?')){
-                    axios.delete(`/api/loans/guarantor/${guarantor.id}`).then((response) => {
-                        let data = response.data;
-                        if(data.status){
-                            this.guarantors.splice(index, 1);
-                        }else{
-                            //notify user...
-                        }
-                    })
+                    this.removeGuarantors.push(guarantor.id);
                 }
-            }else{
-                this.guarantors.splice(index, 1);
             }
+            this.guarantors.splice(index, 1);
         },
 
         onSubmit() {
             axios.post('/api/loans', {
                 guarantors: this.guarantors,
-                loan: this.loan
+                loan: this.loan,
+                remove: this.removeGuarantors
             }).then((response) => {
                 let data = response.data;
                 console.log(data);
