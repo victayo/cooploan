@@ -60,6 +60,9 @@ class LoanController extends Controller
                 $loan = Loan::create($loanData);
             }
 
+            /**
+             * @todo Notify Guarantors
+             */
             foreach($guarantors as $guarantor){
                 if($guarantor['id']){
                     LoanGuarantor::where('id', $guarantor['id'])->update([
