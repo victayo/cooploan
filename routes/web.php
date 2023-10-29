@@ -60,7 +60,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::controller(LoanController::class)->prefix('loans')->group(function(){
         Route::get('/', 'index')->name('loans.index');
         Route::get('/create', 'create')->name('loans.create');
-        Route::post('/', 'store')->name('loans.store');
+        // Route::post('/', 'store')->name('loans.store');
         Route::get('/{loan}', 'show')->name('loans.show');
         Route::get('/{loan}/edit', 'edit')->name('loans.edit');
         Route::post('{loan}/edit', 'update')->name('loans.update');

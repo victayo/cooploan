@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('loan_id');
             $table->string('user_id');
             $table->string('guarantor_id');
-            $table->decimal('amount');
+            $table->decimal('amount', 13, 2);
             $table->string('status')->default('pending');
             $table->timestamp('date_approved')->nullable();
 

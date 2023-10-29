@@ -9,7 +9,7 @@
                     <div class="col-sm-12 col-md-6">
                         <label class="form-label mt-md-4">Loan Amount</label>
                         <div class="input-group">
-                            <input id="loan_amount" name="amount" class="form-control" type="number" v-model="loan.amount" required>
+                            <input id="loan_amount" name="amount" class="form-control" type="number" v-model="loan.loan_amount" required>
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-6">
@@ -32,7 +32,7 @@
                             <div class="col-4">
                                 <label class="form-label">Guarantor</label>
                                 <div class="input-group">
-                                    <select name="guarantor" class="form-control" v-model="guarantor.user" required>
+                                    <select name="guarantor" class="form-control" v-model="guarantor.guarantor_id" required>
                                         <option value="">Select Guarantor</option>
                                         <option v-for="user in users" :value="user.mainone_id">{{ user.firstname }} {{user.lastname }}</option>
                                     </select>
@@ -67,24 +67,40 @@
 <script>
 
 export default {
-    props: [
-        'users',
-        'initialGuarantors'
-    ],
-    data() {
-        return {
-            loan: {
+    props: {
+        users: {
+            type: Array,
+            required: true
+        },
+        initialLoan: {
+            type: Object,
+            required: false,
+            default: {
+                id: 0,
                 amount: 0,
-                tenure: ''
-            },
-            guarantors: []
+                tenure: 12,
+                status: 'pending'
+            }
+        },
+        initialGuarantors: {
+            type: Array,
+            required: false,
+            default: []
         }
     },
+
+    data() {
+        return {
+            loan: _.cloneDeep(this.initialLoan),
+            guarantors: _.cloneDeep(this.initialGuarantors),
+        }
+    },
+
     methods: {
         addGuarantor() {
             this.guarantors.push({
                     id: 0,
-                    user: '',
+                    guarantor_id: '',
                     amount: 0,
                     status: 'pending'
                 }
@@ -92,16 +108,34 @@ export default {
         },
 
         removeGuarantor(index){
-            console.log(index);
+            let guarantor = this.guarantors[index];
+            if(guarantor.id){
+                if(window.confirm('Are you sure you want to remove this Guarantor?')){
+                    axios.delete(`/api/loans/guarantor/${guarantor.id}`).then((response) => {
+                        let data = response.data;
+                        if(data.status){
+                            this.guarantors.splice(index, 1);
+                        }else{
+                            //notify user...
+                        }
+                    })
+                }
+            }else{
+                this.guarantors.splice(index, 1);
+            }
         },
 
         onSubmit() {
-
+            axios.post('/api/loans', {
+                guarantors: this.guarantors,
+                loan: this.loan
+            }).then((response) => {
+                let data = response.data;
+                console.log(data);
+            }).catch((err) => {
+                console.log(err);
+            })
         },
-
-        onGuarantorRemoved(event) {
-            console.log(event);
-        }
     }
 }
 

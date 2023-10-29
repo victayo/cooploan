@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('loans', function (Blueprint $table) {
             $table->id();
             $table->string('user_id');
-            $table->decimal('loan_amount');
+            $table->decimal('loan_amount', 13, 2);
             $table->integer('tenure');
             $table->decimal('interest');
             $table->decimal('monthly_deduction');
             $table->string('status')->default('pending');
-            $table->timestamp('date_approved');
+            $table->timestamp('date_approved')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('mainone_id')->on('users')->onDelete('cascade');
