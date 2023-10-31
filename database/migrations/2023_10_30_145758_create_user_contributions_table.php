@@ -11,17 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('loans', function (Blueprint $table) {
+        Schema::create('user_contributions', function (Blueprint $table) {
             $table->id();
             $table->string('user_id');
-            $table->decimal('loan_amount', 13, 2);
-            $table->integer('tenure');
-            $table->decimal('interest');
-            $table->decimal('monthly_deduction');
-            $table->string('status')->default('pending');
-            $table->timestamp('date_approved')->nullable();
-            $table->date('effective_date')->nullable();
-            $table->tinyInteger('deduct_from_monthly_contribution');
+            $table->decimal('amount', 13, 2);
+            $table->string('status')->comment('The status of the contribution: Active or Inactive. Only one contribution can be active at a time');
+            $table->timestamp('date_activated')->nullable();
+            $table->timestamp('date_deactivated')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('mainone_id')->on('users')->onDelete('cascade');
@@ -33,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('loans');
+        Schema::dropIfExists('user_contributions');
     }
 };
