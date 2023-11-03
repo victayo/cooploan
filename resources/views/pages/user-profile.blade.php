@@ -71,13 +71,13 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">Username</label>
-                                        <input class="form-control" type="text" name="username" value="{{ old('username', auth()->user()->username) }}">
+                                        <input class="form-control" type="text" name="username" value="{{ old('username', auth()->user()->mainone_id) }}" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">Email address</label>
-                                        <input class="form-control" type="email" name="email" value="{{ old('email', auth()->user()->email) }}">
+                                        <input class="form-control" type="email" name="email" value="{{ old('email', auth()->user()->email) }}" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-6">

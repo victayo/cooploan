@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('department', 30);
             $table->date('resumption_date');
             $table->string('job_title', 30);
+            $table->tinyInteger('is_permanent_staff');
             $table->timestamps();
             $table->foreign('mainone_id')->references('mainone_id')->on('users')->onDelete('cascade');
         });

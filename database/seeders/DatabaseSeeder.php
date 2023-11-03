@@ -41,7 +41,8 @@ class DatabaseSeeder extends Seeder
             'mainone_id' => $mainoneId,
             'department' => 'Finance',
             'resumption_date' => '2018-01-01',
-            'job_title' => 'Credit Control'
+            'job_title' => 'Credit Control',
+            'is_permanent_staff' => 1
         ]);
 
         NextOfKin::create([

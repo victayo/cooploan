@@ -28,12 +28,8 @@ return new class extends Migration
             $table->string('state', 15);
             $table->string('country', 15);
             $table->string('gender', 10);
-            $table->string('job_title', 50);
-            $table->string('department', 50);
-            $table->date('resumption_date');
             $table->string('approval_status', 10)->default('pending');
             $table->string('status', 10)->default('active');
-            $table->tinyInteger('is_permanent_staff');
             $table->decimal('save_amount');
             $table->decimal('membership_fee');
             $table->timestamp('date_approved')->nullable();

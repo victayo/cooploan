@@ -31,7 +31,7 @@ Route::get('/', function () {return redirect('/dashboard');})->middleware('auth'
 Route::get('/dashboard', [HomeController::class, 'index'])->name('home')->middleware('auth');
 
 Route::middleware(['guest'])->group(function(){
-    Route::get('/register', [RegisterController::class, 'create'])->name('register');
+    Route::get('/register/{user}', [RegisterController::class, 'create'])->name('register');
     Route::post('/register', [RegisterController::class, 'store'])->name('register.perform');
     Route::get('/login', [LoginController::class, 'show'])->name('login');
     Route::post('/login', [LoginController::class, 'login'])->name('login.perform');
