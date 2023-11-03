@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\RegistrationLink;
 use App\Mail\UserRegistration;
 use App\Models\EmploymentDetails;
 use App\Models\NextOfKin;
@@ -10,6 +11,8 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class UserController extends Controller
@@ -19,6 +22,8 @@ class UserController extends Controller
      */
     private $membershipFee = 2000;
     private $minAmountToSave = 2000;
+    private $linkExpirationDuration = 24;
+
     /**
      * Returns view for all users
      */
@@ -219,6 +224,31 @@ class UserController extends Controller
      * Deletes a user
      */
     public function delete($id){
+
+    }
+
+    public function sendLink(Request $request){
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|unique:users,email',
+        ]);
+
+        if($validator->fails()){
+            return redirect()->route('users.index')->with('error', 'Invalid email or email already exist');
+        }
+
+        $email = $request->post('email');
+
+        $expiresAt = now()->addHour($this->linkExpirationDuration);
+
+        $url = URL::temporarySignedRoute('register', $expiresAt, ['user' => $email]);
+
+        //send the url to the email
+        /**
+         * @todo Create a job?
+         */
+        Mail::to($email)->send(new RegistrationLink($url));
+
+        return redirect()->route('users.index')->with('success', 'Link successfully send to user');
 
     }
 }
