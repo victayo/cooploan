@@ -15,7 +15,7 @@ class UserService {
      * Funds a user's Wallet with an amount
      * @return Wallet
      */
-    public function fundWallet(User $user, $amount){
+    public function fundWallet(User $user, $amount, $includeInTransaction = true){
         try{
             DB::beginTransaction();
             $wallet = Wallet::where('user_id', $user->mainone_id)->first();
@@ -28,11 +28,13 @@ class UserService {
                     'balance' => $amount
                 ]);
             }
-            Transaction::create([
-                'user_id' => $user->mainone_id,
-                'amount' => $amount,
-                'transaction_type' => Transaction::WALLET_FUNDING
-            ]);
+            if($includeInTransaction){
+                Transaction::create([
+                    'user_id' => $user->mainone_id,
+                    'amount' => $amount,
+                    'transaction_type' => Transaction::WALLET_FUNDING
+                ]);
+            }
             DB::commit();
             return $wallet;
         }catch(Exception $exception){
@@ -53,7 +55,7 @@ class UserService {
                 'amount' => $amount
             ]);
 
-            $wallet = $this->fundWallet($user, $amount);
+            $wallet = $this->fundWallet($user, $amount, false);
             if(!$wallet){
                 DB::rollBack();
                 return false;
@@ -71,5 +73,14 @@ class UserService {
             DB::rollBack();
             return false;
         }
+    }
+
+    public function runMonthlyContribution(){
+        $users = User::where([
+            'status' => User::ACTIVE
+        ])->get();
+        $users->each(function($user){
+            $this->makeContribution($user, $user->save_amount);
+        });
     }
 }

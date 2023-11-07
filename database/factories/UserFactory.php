@@ -20,11 +20,11 @@ class UserFactory extends Factory
     {
         $gender = fake()->randomElement(['male', 'female']);
         $mainoneID = fake()->unique()->regexify('^MOSN[0-9]{1,4}$');
-        $approvalStatus = fake()->randomElement([User::APPROVED, User::DECLINED, User::PENDING]);
+        $approvalStatus = fake()->randomElement([User::APPROVED, User::APPROVED, User::APPROVED, User::APPROVED, User::DECLINED, User::PENDING]);
         if($approvalStatus == User::PENDING || $approvalStatus == User::DECLINED){
             $status = User::PENDING;
         }else{
-            $status = fake()->randomElement([User::ACTIVE, User::INACTIVE]);
+            $status = fake()->randomElement([User::ACTIVE, User::ACTIVE, User::ACTIVE, User::ACTIVE, User::INACTIVE]);
         }
 
         $dateApproved = null;
