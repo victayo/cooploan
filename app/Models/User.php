@@ -14,8 +14,16 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
+    const PENDING = 'pending';
+    const ACTIVE = 'active';
+    const INACTIVE = 'inactive';
+    const APPROVED = 'approved';
+    const DECLINED = 'declined';
+
     protected $primaryKey = 'mainone_id';
     protected $keyType = 'string';
+    public $incrementing = false;
+
     /**
      * The attributes that are mass assignable.
      *

@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('employment_details', function (Blueprint $table) {
             $table->string('mainone_id', 20)->primary();
-            $table->string('department', 30);
+            $table->string('department', 100);
             $table->date('resumption_date');
-            $table->string('job_title', 30);
+            $table->string('job_title', 100);
             $table->tinyInteger('is_permanent_staff');
             $table->timestamps();
             $table->foreign('mainone_id')->references('mainone_id')->on('users')->onDelete('cascade');

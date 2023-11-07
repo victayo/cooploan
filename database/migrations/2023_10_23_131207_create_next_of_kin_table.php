@@ -17,9 +17,9 @@ return new class extends Migration
             $table->string('firstname', 30);
             $table->string('lastname', 30);
             $table->date('dob');
-            $table->string('email', 30);
+            $table->string('email', 100);
             $table->string('address');
-            $table->string('phone', 15);
+            $table->string('phone', 50);
             $table->timestamps();
 
             $table->foreign('mainone_id')->references('mainone_id')->on('users')->onDelete('cascade');
