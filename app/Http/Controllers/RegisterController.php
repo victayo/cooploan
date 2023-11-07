@@ -131,6 +131,8 @@ class RegisterController extends Controller
                 'address' => $request->post('nok_address')
             ]);
 
+
+
             DB::commit();
             /**
              * @todo Notify user on successful registration

@@ -12,12 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('user_contributions', function (Blueprint $table) {
+            $table->comment('This table represent contributions made by a user');
             $table->id();
             $table->string('user_id');
             $table->decimal('amount', 13, 2);
-            $table->string('status')->comment('The status of the contribution: Active or Inactive. Only one contribution can be active at a time');
-            $table->timestamp('date_activated')->nullable();
-            $table->timestamp('date_deactivated')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('mainone_id')->on('users')->onDelete('cascade');

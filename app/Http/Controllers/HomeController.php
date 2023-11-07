@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\User;
 
 class HomeController extends Controller
 {
@@ -23,6 +23,9 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('pages.dashboard');
+        $user = User::where('mainone_id', auth()->user()->mainone_id)->with('wallet')->first();
+        return view('pages.dashboard', [
+            'user' => $user
+        ]);
     }
 }
