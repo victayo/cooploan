@@ -1,5 +1,6 @@
 import './bootstrap';
 import './argon-pro';
+import DataTable from 'datatables.net-dt';
 
 import { createApp } from 'vue';
 

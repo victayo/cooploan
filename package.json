@@ -17,6 +17,7 @@
     },
     "dependencies": {
         "choices.js": "^10.2.0",
+        "datatables.net-dt": "^1.13.7",
         "jquery": "^3.7.1",
         "lodash": "^4.17.21",
         "perfect-scrollbar": "^1.5.5",
