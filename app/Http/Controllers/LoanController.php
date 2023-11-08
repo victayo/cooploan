@@ -4,13 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Loan;
 use App\Models\LoanGuarantor;
+use App\Models\Tenure;
 use App\Models\User;
+use App\Services\RepaymentScheduleService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class LoanController extends Controller
 {
+    /**
+     * @var RepaymentScheduleService
+     */
+    private $repaymentScheduleService;
     /**
      * Display a listing of the resource.
      */
@@ -28,9 +34,16 @@ class LoanController extends Controller
     public function create()
     {
         $user = auth()->user();
-        $users = User::with('wallet')->where('mainone_id', '!=', $user->mainone_id)->get();
+        $users = User::with('wallet')
+        ->where('mainone_id', '!=', $user->mainone_id)
+        ->where('status', User::ACTIVE)
+        ->orderBy('firstname', 'asc')
+        ->orderBy('lastname', 'asc')
+        ->get();
+        $tenures = Tenure::all();
         return view('pages.loans.loan-new', [
-            'users' => $users
+            'users' => $users,
+            'tenures' => $tenures
         ]);
     }
 
@@ -46,6 +59,7 @@ class LoanController extends Controller
             $guarantors = $request->post('guarantors');
             $loan = $request->post('loan');
             $removeGuarantors = $request->post('remove');
+            $deductFromMonthly = $request->post('deduct_monthly', true);
 
             DB::beginTransaction();
             $loanData = [
@@ -54,6 +68,7 @@ class LoanController extends Controller
                 'tenure' => $loan['tenure'],
                 'interest' => 10,
                 'monthly_deduction' => 12000,
+                'deduct_from_monthly_contribution' => $deductFromMonthly
             ];
 
             //Insert or update Loan data
@@ -91,6 +106,9 @@ class LoanController extends Controller
 
             DB::commit();
             $loanGuarantors = LoanGuarantor::where('loan_id', $loan->id)->get();
+            /**
+             * @todo Notify guarantors
+             */
             return response()->json(['status' => 'success', 'loan' => $loan, 'loan_guarantors' => $loanGuarantors]);
         }catch(Exception $exception){
             DB::rollBack();
@@ -115,12 +133,19 @@ class LoanController extends Controller
         $loan = Loan::where('id', $loan->id)->first();
         $guarantors = LoanGuarantor::where('loan_id', $loan->id)->get();
         $user = auth()->user();
-        $users = User::with('wallet')->where('mainone_id', '!=', $user->mainone_id)->get();
+        $users = User::with('wallet')
+        ->where('mainone_id', '!=', $user->mainone_id)
+        ->where('status', User::ACTIVE)
+        ->orderBy('firstname', 'asc')
+        ->orderBy('lastname', 'asc')
+        ->get();
+        $tenures = Tenure::all();
 
         return view('pages.loans.loan-edit', [
             'users' => $users,
             'loan' => $loan,
-            'guarantors' => $guarantors
+            'guarantors' => $guarantors,
+            'tenures' => $tenures
         ]);
     }
 
@@ -143,5 +168,31 @@ class LoanController extends Controller
     public function deleteGuarantor($id){
         $status = LoanGuarantor::where('id', $id)->delete();
         return response()->json(['status' => $status]);
+    }
+
+    public function generatePaymentSchedule(Request $request){
+        $request->validate([
+            'principal' => 'required|numeric',
+            'interest' => 'required|numeric',
+            'tenure' => 'required|numeric',
+            'start_date' => 'nullable|date'
+        ]);
+
+        $principal = $request->post('principal');
+        $interest = $request->post('interest');
+        $tenure = $request->post('tenure');
+        $startDate = $request->post('start_date');
+
+        $repaymentScheduleService = $this->getRepaymentScheduleService();
+        $schedule = $repaymentScheduleService->generateRepaymentSchedule($principal, $interest, $tenure, $startDate);
+        return response()->json(['status' => 'success', 'schedule' => $schedule]);
+    }
+
+    private function getRepaymentScheduleService(): RepaymentScheduleService{
+        if($this->repaymentScheduleService){
+            return $this->repaymentScheduleService;
+        }
+        $this->repaymentScheduleService = app()->make(RepaymentScheduleService::class);
+        return $this->repaymentScheduleService;
     }
 }
