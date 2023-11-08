@@ -15,7 +15,10 @@
                     <div class="col-sm-12 col-md-6">
                         <label class="form-label mt-md-4">Tenure (months)</label>
                         <div class="input-group">
-                            <input id="tenure" name="tenure" class="form-control" type="number" v-model="loan.tenure" required>
+                            <select name="tenure" class="form-control" v-model="loan.tenure" required>
+                                <option value="">Select Tenure</option>
+                                <option v-for="tenure in tenures" :value="tenure.tenure">{{ tenure.tenure }}  ({{ tenure.interest }}%)</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -56,9 +59,17 @@
                     </div>
                 </fieldset>
 
-                <div class="d-flex justify-content-end mt-4">
-                    <a class="btn bg-gradient-danger m-0 ms-2" href="/loans">Cancel</a>
-                    <button type="submit" class="btn bg-gradient-primary m-0 ms-2">Save</button>
+                <div>
+                    <payment-schedule :schedules="schedules" :loading="fetchingSchedule"></payment-schedule>
+                </div>
+                <div class="d-flex justify-content-between mt-4">
+                    <div>
+                        <button class="btn btn-small btn-behance" @click.stop.prevent="getSchedules" :disabled="!loan.loan_amount || !loan.tenure">Preview Repayment Schedule</button>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <a class="btn btn-sm bg-gradient-danger ms-2" href="/loans">Cancel</a>
+                        <button type="submit" class="btn btn-sm bg-gradient-primary ms-2">Save</button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -73,13 +84,17 @@ export default {
             type: Array,
             required: true
         },
+        tenures: {
+            type: Array,
+            required: true
+        },
         initialLoan: {
             type: Object,
             required: false,
             default: {
                 id: 0,
                 amount: 0,
-                tenure: 12,
+                tenure: '',
                 status: 'pending'
             }
         },
@@ -94,7 +109,10 @@ export default {
         return {
             loan: _.cloneDeep(this.initialLoan),
             guarantors: _.cloneDeep(this.initialGuarantors),
-            removeGuarantors: []
+            removeGuarantors: [],
+            schedules: [],
+            interest: 10,
+            fetchingSchedule: false
         }
     },
 
@@ -131,6 +149,26 @@ export default {
                 console.log(err);
             })
         },
+
+        getSchedules() {
+            if(this.loan.loan_amount && this.interest && this.loan.tenure){
+                this.fetchingSchedule = true;
+                axios.post('/api/loans/schedule', {
+                    principal: this.loan.loan_amount,
+                    interest: this.interest,
+                    tenure: this.loan.tenure
+                }).then(response => {
+                    let data = response.data;
+                    if(data.status == 'success'){
+                        this.schedules = data.schedule;
+                    }
+                }).catch(err => {
+                    console.error(err);
+                }).finally(() => {
+                    this.fetchingSchedule = false
+                })
+            }
+        }
     }
 }
 
