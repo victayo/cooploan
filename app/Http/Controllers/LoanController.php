@@ -20,9 +20,14 @@ class LoanController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $loans = Loan::where('user_id', auth()->user()->mainone_id)->get();
+        if($request->user()->can('viewAny', Loan::class)){
+            $loans = Loan::all();
+        }else{
+            $loans = Loan::where('user_id', auth()->user()->mainone_id)->get();
+        }
+
         return view('pages.loans.index', [
             'loans' => $loans
         ]);
@@ -120,16 +125,38 @@ class LoanController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, Loan $loan)
     {
-        //
+        if($request->user()->cannot('view', $loan)){
+            abort(403);
+        }
+        $loan = Loan::where('id', $loan->id)->first();
+        $guarantors = LoanGuarantor::where('loan_id', $loan->id)->get();
+        $user = auth()->user();
+        $users = User::with('wallet')
+        ->where('mainone_id', '!=', $user->mainone_id)
+        ->where('status', User::ACTIVE)
+        ->orderBy('firstname', 'asc')
+        ->orderBy('lastname', 'asc')
+        ->get();
+        $tenures = Tenure::all();
+
+        return view('pages.loans.loan-show', [
+            'users' => $users,
+            'loan' => $loan,
+            'guarantors' => $guarantors,
+            'tenures' => $tenures
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Loan $loan)
+    public function edit(Request $request, Loan $loan)
     {
+        if($request->user()->cannot('update', $loan)){
+            abort(403);
+        }
         $loan = Loan::where('id', $loan->id)->first();
         $guarantors = LoanGuarantor::where('loan_id', $loan->id)->get();
         $user = auth()->user();

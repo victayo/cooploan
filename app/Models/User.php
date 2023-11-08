@@ -90,4 +90,16 @@ class User extends Authenticatable
     public function wallet(){
         return $this->hasOne(Wallet::class, 'user_id', 'mainone_id');
     }
+
+    public function roles() {
+        return $this->belongsToMany(Role::class, 'role_users', 'user_id', 'role_id');
+    }
+
+    public function hasRole($role): bool {
+        return $this->roles->contains('name', $role);
+    }
+
+    public function isAdmin(){
+        return $this->hasRole(Role::ADMIN);
+    }
 }

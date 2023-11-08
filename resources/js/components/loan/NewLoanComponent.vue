@@ -1,10 +1,10 @@
 <template>
     <div class="card mt-4">
         <div class="card-header">
-            <h5>New Loan</h5>
+            <!-- <h5>MCOOP Loan</h5> -->
         </div>
         <div class="card-body pt-0">
-            <form @submit.prevent="onSubmit">
+            <form @submit.prevent="onSubmit" :disabled="action != 'view'">
                 <div class="row">
                     <div class="col-sm-12 col-md-6">
                         <label class="form-label mt-md-4">Loan Amount</label>
@@ -25,7 +25,7 @@
 
                 <fieldset class="mt-4 p-3">
                     <legend>Guarantors</legend>
-                    <div class="d-flex justify-content-end">
+                    <div class="d-flex justify-content-end" v-if="action != 'view'">
                         <button class="btn bg-gradient-primary btn-sm" @click.stop.prevent="addGuarantor">
                             <i class="fa fa-plus"></i>
                         </button>
@@ -35,7 +35,7 @@
                             <div class="col-4">
                                 <label class="form-label">Guarantor</label>
                                 <div class="input-group">
-                                    <select name="guarantor" class="form-control" v-model="guarantor.guarantor_id" required>
+                                    <select name="guarantor" class="form-control" v-model="guarantor.guarantor_id" required :disabled="guarantor.status && guarantor.status != 'pending'">
                                         <option value="">Select Guarantor</option>
                                         <option v-for="user in users" :value="user.mainone_id">{{ user.firstname }} {{user.lastname }}</option>
                                     </select>
@@ -44,13 +44,13 @@
                             <div class="col-4">
                                 <label class="form-label">Amount</label>
                                 <div class="input-group">
-                                    <input id="amount" name="amount" class="form-control" type="number" v-model="guarantor.amount" min="2000" required>
+                                    <input id="amount" name="amount" class="form-control" type="number" v-model="guarantor.amount" min="2000" required :readonly="guarantor.status && guarantor.status != 'pending'">
                                 </div>
                             </div>
                             <div class="col-auto btn-container">
                                 <span :class="`badge font-italic ${guarantor.status}`">{{ guarantor.status }}</span>
                             </div>
-                            <div class="col-auto btn-container">
+                            <div class="col-auto btn-container" v-if="guarantor.status && guarantor.status == 'pending' && action != 'view'">
                                 <button class="btn bg-gradient-danger btn-sm" @click.stop.prevent="removeGuarantor(index)">
                                     <i class="fa fa-trash"></i>
                                 </button>
@@ -62,7 +62,7 @@
                 <div>
                     <payment-schedule :schedules="schedules" :loading="fetchingSchedule"></payment-schedule>
                 </div>
-                <div class="d-flex justify-content-between mt-4">
+                <div class="d-flex justify-content-between mt-4" v-if="action != 'view'">
                     <div>
                         <button class="btn btn-small btn-behance" @click.stop.prevent="getSchedules" :disabled="!loan.loan_amount || !loan.tenure">Preview Repayment Schedule</button>
                     </div>
@@ -102,6 +102,10 @@ export default {
             type: Array,
             required: false,
             default: []
+        },
+        action: {
+            type: String,
+            required: true
         }
     },
 
@@ -113,6 +117,12 @@ export default {
             schedules: [],
             interest: 10,
             fetchingSchedule: false
+        }
+    },
+
+    mounted() {
+        if(this.action == 'view'){
+            this.getSchedules();
         }
     },
 

@@ -6,12 +6,9 @@
     <div class="container-fluid my-5 py-2">
         <div class="d-flex justify-content-center mb-5">
             <div class="col-lg-9 mt-lg-0 mt-4">
-                <new-loan :users="{{$users}}" :initial-loan="{{json_encode($loan)}}" :initial-guarantors="{{$guarantors}}" :tenures="{{$tenures}}"></new-loan>
+                <new-loan :users="{{$users}}" :initial-loan="{{json_encode($loan)}}" :initial-guarantors="{{$guarantors}}" :tenures="{{$tenures}}" :action="'edit'"></new-loan>
             </div>
         </div>
     </div>
 @endsection
 
-@push('js')
-    <script src="{{ asset('assets/js/user.js') }}" defer></script>
-@endpush
