@@ -23,5 +23,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::controller(LoanController::class)->prefix('loans')->group(function(){
         Route::post('/', 'store')->name('loans.store');
         Route::delete('/guarantor/{id}', 'deleteGuarantor')->name('loans.guarantor.delete');
+        Route::post('/schedule', 'generatePaymentSchedule')->name('loans.schedule');
     });
 });

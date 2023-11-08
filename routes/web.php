@@ -24,6 +24,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\ResetPassword;
 use App\Http\Controllers\ChangePassword;
+use App\Http\Controllers\GuarantorController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\UserController;
 
@@ -67,6 +68,14 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('{loan}/edit', 'update')->name('loans.update');
         Route::delete('/{loan}', 'delete')->name('loans.delete');
     });
+
+    Route::controller(GuarantorController::class)->prefix('guarantor')->group(function(){
+        Route::get('/', 'index')->name('guarantors.index');
+        Route::post('/approve/{id}', 'approve')->name('guarantor.approve');
+        Route::post('/reject/{id}', 'reject')->name('guarantor.reject');
+        Route::post('/guarantor/{id}', 'show')->name('guarantor.show');
+    });
+
 
     Route::get('/{page}', [PageController::class, 'index'])->name('page');
 });
