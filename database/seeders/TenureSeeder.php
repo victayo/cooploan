@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Tenure;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class TenureSeeder extends Seeder
 {
@@ -13,7 +14,7 @@ class TenureSeeder extends Seeder
      */
     public function run(): void
     {
-
+        DB::table('tenures')->truncate();
         for($i = 2; $i <= 36; $i++){
             if($i >= 2 && $i <= 18){ // 2 - 18 months, interest is 10%
                 $interest = 10;
