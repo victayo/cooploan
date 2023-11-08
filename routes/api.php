@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GuarantorController;
 use App\Http\Controllers\LoanController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,5 +25,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', 'store')->name('loans.store');
         Route::delete('/guarantor/{id}', 'deleteGuarantor')->name('loans.guarantor.delete');
         Route::post('/schedule', 'generatePaymentSchedule')->name('loans.schedule');
+    });
+
+    Route::controller(GuarantorController::class)->prefix('guarantor')->group(function(){
+        Route::post('/approve/{id}', 'approve')->name('guarantor.approve');
+        Route::post('/reject/{id}', 'reject')->name('guarantor.reject');
     });
 });

@@ -23,8 +23,12 @@ class GuarantorController extends Controller
         if(!$loanGuarantor){
             abort(404);
         }
-        $loanGuarantor->status = LoanGuarantor::APPROVE;
+        $loanGuarantor->status = LoanGuarantor::APPROVED;
         $loanGuarantor->save();
+        /**
+         * @todo send notification to user that loan has been approved
+         */
+        return response()->json(['status' => 'success']);
     }
 
     public function reject($loanGuarantorId){
@@ -32,7 +36,11 @@ class GuarantorController extends Controller
         if(!$loanGuarantor){
             abort(404);
         }
-        $loanGuarantor->status = LoanGuarantor::REJECT;
+        $loanGuarantor->status = LoanGuarantor::REJECTED;
         $loanGuarantor->save();
+        /**
+         * @todo send notification to user that loan has been rejected
+         */
+        return response()->json(['status' => 'success']);
     }
 }

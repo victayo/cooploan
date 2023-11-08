@@ -71,8 +71,6 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::controller(GuarantorController::class)->prefix('guarantor')->group(function(){
         Route::get('/', 'index')->name('guarantors.index');
-        Route::post('/approve/{id}', 'approve')->name('guarantor.approve');
-        Route::post('/reject/{id}', 'reject')->name('guarantor.reject');
         Route::post('/guarantor/{id}', 'show')->name('guarantor.show');
     });
 

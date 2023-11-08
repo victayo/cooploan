@@ -10,8 +10,8 @@ class LoanGuarantor extends Model
     use HasFactory;
 
     const PENDING = 'pending';
-    const APPROVE = 'approve';
-    const REJECT = 'reject';
+    const APPROVED = 'approved';
+    const REJECTED = 'rejected';
 
     protected $guarded = [];
 
