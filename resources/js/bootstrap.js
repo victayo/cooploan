@@ -1,10 +1,14 @@
 import PerfectScrollbar from 'perfect-scrollbar';
 import _ from 'lodash';
+import $ from 'jquery';
 import axios from 'axios';
 import Choices from 'choices.js';
 
+
 window.PerfectScrollbar = PerfectScrollbar;
 window.Choices = Choices;
+window.$ = window.jQuery = $;
+
 
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
