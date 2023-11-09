@@ -43,6 +43,7 @@ class RepaymentScheduleService
         $beginningBalance = $principal;
         $schedule = [];
         $timestamp = now();
+        $totalInterest = 0;
 
         for ($t = 0; $t < $tenure; $t++) {
             $repaymentDate = Carbon::parse($loanStartDate)->addMonths($t)->toDateString();
@@ -59,12 +60,15 @@ class RepaymentScheduleService
                 'created_at' => $timestamp,
                 'updated_at' => $timestamp
             ];
+            $totalInterest += $interest;
             $beginningBalance = $remainingBalance;
         }
 
-
-        // RepaymentSchedule::insert($schedule);
-
-        return $schedule;
+        $totalInterest = round($totalInterest, 2);
+        return [
+            'schedule' => $schedule,
+            'total_interest' => $totalInterest,
+            'monthly_payment' => round($monthlyPayment,2)
+        ];
     }
 }

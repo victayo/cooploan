@@ -10,7 +10,9 @@
             <div class="card mb-4">
                 <div class="card-header pb-0">
                     <h6>Loans</h6>
-                    <a href="{{route('loans.create')}}" class="btn bg-gradient-dark btn-sm float-end mb-0">Request for Loan</a>
+                    @if (!$hasActive)
+                        <a href="{{route('loans.create')}}" class="btn bg-gradient-dark btn-sm float-end mb-0">Request for Loan</a>
+                    @endif
                 </div>
                 <div class="card-body px-0 pt-0 pb-2">
                     <div class="table-responsive p-0">

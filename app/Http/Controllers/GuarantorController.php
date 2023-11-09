@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\GuarantorApproval;
 use App\Models\LoanGuarantor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class GuarantorController extends Controller
 {
@@ -25,9 +27,11 @@ class GuarantorController extends Controller
         }
         $loanGuarantor->status = LoanGuarantor::APPROVED;
         $loanGuarantor->save();
-        /**
-         * @todo send notification to user that loan has been approved
-         */
+
+        // notify loan requester
+        $user = $loanGuarantor->user;
+        $url = route('loans.show', ['loan' => $loanGuarantor->loan->id]);
+        Mail::to($user->email)->send(new GuarantorApproval($user, $loanGuarantor->loan, $url, LoanGuarantor::APPROVED));
         return response()->json(['status' => 'success']);
     }
 
@@ -38,9 +42,11 @@ class GuarantorController extends Controller
         }
         $loanGuarantor->status = LoanGuarantor::REJECTED;
         $loanGuarantor->save();
-        /**
-         * @todo send notification to user that loan has been rejected
-         */
+
+        // notify loan requester
+        $user = $loanGuarantor->user;
+        $url = route('loans.show', ['loan' => $loanGuarantor->loan->id]);
+        Mail::to($user->email)->send(new GuarantorApproval($user, $loanGuarantor->loan, $url, LoanGuarantor::REJECTED));
         return response()->json(['status' => 'success']);
     }
 }

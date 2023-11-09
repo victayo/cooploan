@@ -9,6 +9,10 @@ class Loan extends Model
 {
     use HasFactory;
 
+    const ACTIVE = 'active';
+    const PENDING = 'pending';
+    const COMPLETED = 'completed';
+
     protected $guarded = [];
 
     public function guarantors(){

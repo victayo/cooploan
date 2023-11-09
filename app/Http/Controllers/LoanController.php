@@ -28,8 +28,13 @@ class LoanController extends Controller
             $loans = Loan::where('user_id', auth()->user()->mainone_id)->get();
         }
 
+        $activeLoan = Loan::where([
+            'user_id' => $request->user()->mainone_id,
+        ])->whereIn('status', [Loan::ACTIVE, Loan::PENDING])->count();
+
         return view('pages.loans.index', [
-            'loans' => $loans
+            'loans' => $loans,
+            'hasActive' => $activeLoan > 0 // A user should not be able to request a new loan if there's an active or pending loan request
         ]);
     }
 
