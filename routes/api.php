@@ -24,7 +24,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::controller(LoanController::class)->prefix('loans')->group(function(){
         Route::post('/', 'store')->name('loans.store');
         Route::delete('/guarantor/{id}', 'deleteGuarantor')->name('loans.guarantor.delete');
-        Route::post('/schedule', 'generatePaymentSchedule')->name('loans.schedule');
+        Route::post('/schedule/{loan?}', 'generatePaymentSchedule')->name('loans.schedule');
+        Route::post('/approve/{loan}', 'approveLoan')->name('loans.approve');
+        Route::post('/reject/{loan}', 'rejectLoan')->name('loans.reject');
     });
 
     Route::controller(GuarantorController::class)->prefix('guarantor')->group(function(){

@@ -1,82 +1,107 @@
 <template>
-    <div class="card mt-4">
-        <div class="card-header">
-            <!-- <h5>MCOOP Loan</h5> -->
-        </div>
-        <div class="card-body pt-0">
-            <form @submit.prevent="onSubmit" :disabled="action != 'view'">
-                <div class="row">
-                    <div class="col-sm-12 col-md-6">
-                        <label class="form-label mt-md-4" for="loan_amount">Loan Amount</label>
-                        <div class="input-group">
-                            <input id="loan_amount" name="amount" class="form-control" type="number" v-model="loan.loan_amount" required>
+    <div>
+        <div class="card mt-4">
+            <div class="card-body pt-0">
+                <form @submit.prevent="onSubmit" :disabled="action != 'view'">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-6">
+                            <label class="form-label mt-md-4" for="loan_amount">Loan Amount</label>
+                            <div class="input-group">
+                                <input id="loan_amount" name="amount" class="form-control" type="number"
+                                    v-model="loan.loan_amount" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <label class="form-label mt-md-4" for="tenure">Tenure (months)</label>
+                            <div class="input-group">
+                                <select id="tenure" name="tenure" class="form-control" v-model="loan.tenure" required>
+                                    <option value="">Select Tenure</option>
+                                    <option v-for="tenure in tenures" :value="tenure.tenure">{{ tenure.tenure }} ({{
+                                        tenure.interest }}%)</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-sm-12 col-md-6">
-                        <label class="form-label mt-md-4" for="tenure">Tenure (months)</label>
-                        <div class="input-group">
-                            <select id="tenure" name="tenure" class="form-control" v-model="loan.tenure" required>
-                                <option value="">Select Tenure</option>
-                                <option v-for="tenure in tenures" :value="tenure.tenure">{{ tenure.tenure }}  ({{ tenure.interest }}%)</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
 
-                <fieldset class="mt-4 p-3">
-                    <legend>Guarantors</legend>
-                    <div class="d-flex justify-content-end" v-if="action != 'view'">
-                        <button class="btn bg-gradient-primary btn-sm" @click.stop.prevent="addGuarantor">
-                            <i class="fa fa-plus"></i>
-                        </button>
-                    </div>
-                    <div>
-                        <div class="row" v-for="(guarantor, index) in guarantors" :key="index">
-                            <div class="col-4">
-                                <label class="form-label" :for="'guarantor-'+index">Guarantor</label>
-                                <div class="input-group">
-                                    <select :id="'guarantor-'+index" :name="'guarantor-'+index" class="form-control" v-model="guarantor.guarantor_id" required :disabled="guarantor.status && guarantor.status != 'pending'">
-                                        <option value="">Select Guarantor</option>
-                                        <option v-for="user in users" :value="user.mainone_id">{{ user.firstname }} {{user.lastname }}</option>
-                                    </select>
+                    <fieldset class="mt-4 p-3">
+                        <legend>Guarantors</legend>
+                        <div class="d-flex justify-content-end" v-if="action != 'view'">
+                            <button class="btn bg-gradient-primary btn-sm" @click.stop.prevent="addGuarantor">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                        <div>
+                            <div class="row" v-for="(guarantor, index) in guarantors" :key="index">
+                                <div class="col-4">
+                                    <label class="form-label" :for="'guarantor-' + index">Guarantor</label>
+                                    <div class="input-group">
+                                        <select :id="'guarantor-' + index" :name="'guarantor-' + index" class="form-control"
+                                            v-model="guarantor.guarantor_id" required
+                                            :disabled="guarantor.status && guarantor.status != 'pending'">
+                                            <option value="">Select Guarantor</option>
+                                            <option v-for="user in users" :value="user.mainone_id">{{ user.firstname }}
+                                                {{ user.lastname }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label" :for="'amount-' + index">Amount</label>
+                                    <div class="input-group">
+                                        <input :id="'amount-' + index" class="form-control" type="number"
+                                            v-model="guarantor.amount" min="2000" required
+                                            :readonly="guarantor.status && guarantor.status != 'pending'">
+                                    </div>
+                                </div>
+                                <div class="col-auto btn-container">
+                                    <span :class="`badge font-italic ${guarantor.status}`">{{ guarantor.status }}</span>
+                                </div>
+                                <div class="col-auto btn-container"
+                                    v-if="guarantor.status && (guarantor.status == 'pending' || guarantor.status == 'rejected') && action != 'view'">
+                                    <button class="btn bg-gradient-danger btn-sm"
+                                        @click.stop.prevent="removeGuarantor(index)">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
                                 </div>
                             </div>
-                            <div class="col-4">
-                                <label class="form-label" :for="'amount-'+index">Amount</label>
-                                <div class="input-group">
-                                    <input :id="'amount-'+index"  class="form-control" type="number" v-model="guarantor.amount" min="2000" required :readonly="guarantor.status && guarantor.status != 'pending'">
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <strong>Total Guarantor Sum: </strong> {{ totalGuarantorAmount().toLocaleString('en-US')
+                                    }}
                                 </div>
                             </div>
-                            <div class="col-auto btn-container">
-                                <span :class="`badge font-italic ${guarantor.status}`">{{ guarantor.status }}</span>
-                            </div>
-                            <div class="col-auto btn-container" v-if="guarantor.status && (guarantor.status == 'pending' || guarantor.status == 'rejected') && action != 'view'">
-                                <button class="btn bg-gradient-danger btn-sm" @click.stop.prevent="removeGuarantor(index)">
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                            </div>
                         </div>
-                        <div class="row mt-3">
-                            <div class="col-12">
-                                <strong>Total Guarantor Sum: </strong> {{ totalGuarantorAmount() }}
-                            </div>
-                        </div>
-                    </div>
-                </fieldset>
+                    </fieldset>
 
-                <div>
-                    <payment-schedule :schedules="schedules" :loading="fetchingSchedule" :monthlyPayment="monthlyPayment" :totalInterest="totalInterest"></payment-schedule>
-                </div>
-                <div class="d-flex justify-content-between mt-4" v-if="action != 'view'">
                     <div>
-                        <button class="btn btn-small btn-behance" @click.stop.prevent="getSchedules" :disabled="!loan.loan_amount || !loan.tenure">Preview Repayment Schedule</button>
+                        <payment-schedule :schedules="schedules" :loading="fetchingSchedule" :monthlyPayment="monthlyPayment" :totalInterest="totalInterest" :loanApprovalStatus="loan.approval_status"></payment-schedule>
                     </div>
-                    <div class="d-flex justify-content-end">
-                        <a class="btn btn-sm bg-gradient-danger ms-2" href="/loans">Cancel</a>
-                        <button type="submit" class="btn btn-sm bg-gradient-primary ms-2">Save</button>
+
+                    <div class="row" v-if="isReadyForApproval() || loan.approval_status == 'approved'">
+                        <div class="col-4">
+                            <label class="form-label" for="effective_date">Loan Effective Date</label>
+                            <div class="input-group">
+                                <input id="effective_date" class="form-control" type="date" v-model="loanEffectiveDate" required :readonly="loan.status == 'active'">
+                            </div>
+                        </div>
                     </div>
+
+                    <div class="d-flex justify-content-between mt-4" v-if="action != 'view'">
+                        <div>
+                            <button class="btn btn-small btn-behance" @click.stop.prevent="getSchedules"
+                                :disabled="!loan.loan_amount || !loan.tenure">Preview Repayment Schedule</button>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <a class="btn btn-sm bg-gradient-danger ms-2" href="/loans">Cancel</a>
+                            <button type="submit" class="btn btn-sm bg-gradient-primary ms-2">Save</button>
+                        </div>
+                    </div>
+
+                </form>
+                <div class="d-flex justify-content-end" v-if="isReadyForApproval() && (loan.approval_status != 'approved' && loan.approval_status != 'rejected')">
+                    <button @click.stop.prevent="rejectLoan" class="btn btn-sm bg-gradient-danger ms-2">Reject</button>
+                    <button @click.stop.prevent="approveLoan" class="btn btn-sm bg-gradient-primary ms-2">Approve</button>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </template>
@@ -127,12 +152,13 @@ export default {
             interest: 10,
             totalInterest: 0,
             monthlyPayment: 0,
+            loanEffectiveDate: this.initialLoan.effective_date ? this.initialLoan.effective_date : moment().format('YYYY-MM-DD'),
             fetchingSchedule: false,
         }
     },
 
     mounted() {
-        if(this.action == 'view'){
+        if (this.action == 'view') {
             this.getSchedules();
         }
     },
@@ -140,18 +166,18 @@ export default {
     methods: {
         addGuarantor() {
             this.guarantors.push({
-                    id: 0,
-                    guarantor_id: '',
-                    amount: 0,
-                    status: 'pending'
-                }
+                id: 0,
+                guarantor_id: '',
+                amount: 0,
+                status: 'pending'
+            }
             );
         },
 
-        removeGuarantor(index){
+        removeGuarantor(index) {
             let guarantor = this.guarantors[index];
-            if(guarantor.id){
-                if(window.confirm('Are you sure you want to remove this Guarantor?')){
+            if (guarantor.id) {
+                if (window.confirm('Are you sure you want to remove this Guarantor?')) {
                     this.removeGuarantors.push(guarantor.id);
                 }
             }
@@ -172,18 +198,22 @@ export default {
         },
 
         getSchedules() {
-            if(this.loan.loan_amount && this.interest && this.loan.tenure){
+            if (this.loan.loan_amount && this.interest && this.loan.tenure) {
                 this.fetchingSchedule = true;
-                axios.post('/api/loans/schedule', {
+                let url = '/api/loans/schedule';
+                if(this.loan.id){
+                    url += `/${this.loan.id}`;
+                }
+                axios.post(url, {
                     principal: this.loan.loan_amount,
                     interest: this.interest,
                     tenure: this.loan.tenure
                 }).then(response => {
                     let data = response.data;
-                    if(data.status == 'success'){
+                    if (data.status == 'success') {
                         this.schedules = data.schedule.schedule;
-                        this.monthlyPayment = data.schedule.monthly_payment;
-                        this.totalInterest = data.schedule.total_interest;
+                        this.monthlyPayment = +data.schedule.monthly_payment;
+                        this.totalInterest = +data.schedule.total_interest;
                     }
                 }).catch(err => {
                     console.error(err);
@@ -193,33 +223,56 @@ export default {
             }
         },
 
-        isReadyForApproval(){
-            if(!this.guarantors.length){ //there must be a guarantor for the loan
+        isReadyForApproval() {
+            if (!this.guarantors.length) { //there must be a guarantor for the loan
                 return false;
             }
 
-            for(let i in this.guarantors){ //no approval must be pending or rejected
-                if(this.guarantors[i].status == 'pending' || this.guarantors[i].status == 'rejected'){
+            for (let i in this.guarantors) { //no approval must be pending or rejected
+                if (this.guarantors[i].status == 'pending' || this.guarantors[i].status == 'rejected') {
                     return false;
                 }
             }
 
             let totalGuarantorAmount = this.totalGuarantorAmount();
-            if(totalGuarantorAmount <= (0.5 * this.loan.loan_amount)){ //the total guarantor amount must be at least 50% of the loan amount
+            if (totalGuarantorAmount <= (0.5 * this.loan.loan_amount)) { //the total guarantor amount must be at least 50% of the loan amount
                 return false;
             }
 
             return true;
         },
 
-        totalGuarantorAmount(){
+        totalGuarantorAmount() {
             let sum = 0;
             this.guarantors.forEach(guarantor => {
                 sum += (+guarantor.amount);
             });
             return sum;
-        }
+        },
 
+        approveLoan() {
+            axios.post(`/api/loans/approve/${this.loan.id}`, {
+                effective_date: this.loanEffectiveDate
+            }).then(response => {
+                let data = response.data;
+                this.loan = data.loan;
+                this.schedules = data.schedule.schedule;
+                this.monthlyPayment = +data.schedule.monthly_payment;
+                this.totalInterest = +data.schedule.total_interest;
+            }).catch(err => {
+                    console.error(err);
+            });
+        },
+
+
+        rejectLoan() {
+            axios.post(`/api/loans/reject/${this.loan.id}`).then(response => {
+                let data = response.data;
+                this.loan = data.loan;
+            }).catch(err => {
+                    console.error(err);
+            });
+        }
 
     }
 }
@@ -227,20 +280,18 @@ export default {
 </script>
 
 <style scoped>
-    .btn-container {
-        margin-top: 35px;
-    }
+.btn-container {
+    margin-top: 35px;
+}
 
-    .pending{
-        background: var(--bs-secondary);
-    }
+.pending {
+    background: var(--bs-secondary);
+}
 
-    .approved{
-        background: var(--bs-teal);
-    }
+.approved {
+    background: var(--bs-teal);
+}
 
-    .rejected {
-        background: var(--bs-danger);
-    }
-
-</style>
+.rejected {
+    background: var(--bs-danger);
+}</style>

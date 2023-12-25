@@ -3,11 +3,15 @@ import _ from 'lodash';
 import $ from 'jquery';
 import axios from 'axios';
 import Choices from 'choices.js';
+import moment from 'moment';
+import DataTable from 'datatables.net-dt';
 
 
 window.PerfectScrollbar = PerfectScrollbar;
 window.Choices = Choices;
 window.$ = window.jQuery = $;
+window.moment = moment;
+window.DataTable = DataTable;
 
 
 /**

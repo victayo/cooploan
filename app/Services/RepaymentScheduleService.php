@@ -71,4 +71,29 @@ class RepaymentScheduleService
             'monthly_payment' => round($monthlyPayment,2)
         ];
     }
+
+    public function createRepaymentSchedule(Loan $loan){
+        $principal = $loan->loan_amount;
+        $interest = $loan->interest;
+        $tenure = $loan->tenure;
+        $loanStartDate = $loan->effective_date;
+
+        $paymentSchedule = $this->generateRepaymentSchedule($principal, $interest, $tenure, $loanStartDate);
+        $schedules = $paymentSchedule['schedule'];
+        $monthlyPayment = $paymentSchedule['monthly_payment'];
+        $loan->monthly_deduction = $monthlyPayment;
+        $loan->save();
+
+        $repaymentSchedules = [];
+        foreach($schedules as $schedule){
+            $schedule['loan_id'] = $loan->id;
+            $schedule['status'] = RepaymentSchedule::PENDING;
+            $repaymentSchedule = RepaymentSchedule::create($schedule);
+            $repaymentSchedules[] = $repaymentSchedule->toArray();
+        }
+
+        $paymentSchedule['schedule'] = $repaymentSchedules;
+
+        return $paymentSchedule;
+    }
 }

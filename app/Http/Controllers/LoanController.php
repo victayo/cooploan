@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\LoanApproval;
 use App\Models\Loan;
 use App\Models\LoanGuarantor;
 use App\Models\Tenure;
@@ -10,6 +11,7 @@ use App\Services\RepaymentScheduleService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class LoanController extends Controller
 {
@@ -202,7 +204,7 @@ class LoanController extends Controller
         return response()->json(['status' => $status]);
     }
 
-    public function generatePaymentSchedule(Request $request){
+    public function generatePaymentSchedule(Request $request, Loan $loan = null){
         $request->validate([
             'principal' => 'required|numeric',
             'interest' => 'required|numeric',
@@ -215,9 +217,53 @@ class LoanController extends Controller
         $tenure = $request->post('tenure');
         $startDate = $request->post('start_date');
 
-        $repaymentScheduleService = $this->getRepaymentScheduleService();
-        $schedule = $repaymentScheduleService->generateRepaymentSchedule($principal, $interest, $tenure, $startDate);
+        if($loan && $loan->approval_status == Loan::APPROVED){ // Loan has been approved. Get the repayment schedule already created
+            $repaymentSchedules = $loan->repaymentSchedules;
+            $monthlyPayment = $loan->monthly_deduction;
+            $totalInterest = 0;
+            foreach($repaymentSchedules as $schedule){
+                $totalInterest += $schedule->interest;
+            }
+            $schedule = [
+                'schedule' => $repaymentSchedules->toArray(),
+                'total_interest' => round($totalInterest, 2),
+                'monthly_payment' => $monthlyPayment
+            ];
+
+        }else{ // this is a preview. Generate a repayment schedule
+            $repaymentScheduleService = $this->getRepaymentScheduleService();
+            $schedule = $repaymentScheduleService->generateRepaymentSchedule($principal, $interest, $tenure, $startDate);
+        }
         return response()->json(['status' => 'success', 'schedule' => $schedule]);
+    }
+
+    public function approveLoan(Request $request, Loan $loan){
+        $request->validate([
+            'effective_date' => 'nullable|date'
+        ]);
+        $effectiveDate = $request->post('effective_date', now()->toDateString());
+        $loan->approval_status = Loan::APPROVED;
+        $loan->effective_date = $effectiveDate;
+        $loan->date_approved = now();
+        $loan->status = Loan::ACTIVE;
+        $loan->save();
+
+        $repaymentScheduleService = $this->getRepaymentScheduleService();
+        $schedule = $repaymentScheduleService->createRepaymentSchedule($loan);
+
+        //notify user on approval
+        Mail::to($loan->user->email)->send(new LoanApproval($loan));
+        return response()->json(['status' => 'success', 'schedule' => $schedule, 'loan' => $loan]);
+    }
+
+    public function rejectLoan(Loan $loan){
+        $loan->approval_status = Loan::REJECTED;
+        $loan->status = Loan::INACTIVE;
+        $loan->save();
+
+        //notify user on approval
+        Mail::to($loan->user->email)->send(new LoanApproval($loan));
+        return response()->json(['status' => 'success', 'loan' => $loan]);
     }
 
     private function getRepaymentScheduleService(): RepaymentScheduleService{

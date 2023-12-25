@@ -51,7 +51,7 @@
                                             <p class="text-sm font-weight-bold mb-0">{{$loan->created_at->format("M j, Y g:i a")}}</p>
                                         </td>
                                         <td class="align-middle text-center text-sm">
-                                            <p class="text-sm font-weight-bold mb-0">{{$loan->date_approved?->format("M j, Y g:i a")}}</p>
+                                            <p class="text-sm font-weight-bold mb-0">{{$loan->dateApproved?->format("M j, Y g:i a")}}</p>
                                         </td>
                                         <td class="align-middle text-end">
                                             <div class="d-flex px-3 py-1 justify-content-center align-items-center">

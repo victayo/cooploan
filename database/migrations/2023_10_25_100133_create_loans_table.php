@@ -18,7 +18,8 @@ return new class extends Migration
             $table->integer('tenure');
             $table->decimal('interest');
             $table->decimal('monthly_deduction');
-            $table->string('status')->default('pending');
+            $table->string('status', 50)->default('pending');
+            $table->string('approval_status', 50)->default('pending');
             $table->timestamp('date_approved')->nullable();
             $table->date('effective_date')->nullable();
             $table->tinyInteger('deduct_from_monthly_contribution');

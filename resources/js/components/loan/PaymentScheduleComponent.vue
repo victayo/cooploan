@@ -26,31 +26,35 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div>
-                            <table class="table table-sm small">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Payment Date</th>
-                                        <th scope="col">Beginning Balance (Principal)</th>
-                                        <th scope="col">Interest</th>
-                                        <th scope="col">Principal</th>
-                                        <th scope="col">Ending Balance (Principal)</th>
-                                        <th scope="col">Total Monthly Repayment</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="text-center" v-for="(schedule, index) in schedules" :key="index">
-                                        <th scope="row">{{ index + 1 }}</th>
-                                        <td>{{ schedule.repayment_date }}</td>
-                                        <td>{{ schedule.beginning_balance }}</td>
-                                        <td>{{ schedule.interest }}</td>
-                                        <td>{{ schedule.principal }}</td>
-                                        <td>{{ schedule.end_balance }}</td>
-                                        <td>{{ schedule.monthly_repayment }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div class="table-responsive">
+                            <perfect-scrollbar>
+                                <table class="table table-sm small">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Payment Date</th>
+                                            <th scope="col">Beginning Balance (Principal)</th>
+                                            <th scope="col">Interest</th>
+                                            <th scope="col">Principal</th>
+                                            <th scope="col">Ending Balance (Principal)</th>
+                                            <th scope="col" v-if="loanApprovalStatus == 'approved'">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="text-center" v-for="(schedule, index) in schedules" :key="index">
+                                            <th scope="row">{{ index + 1 }}</th>
+                                            <td>{{ schedule.repayment_date }}</td>
+                                            <td>{{ schedule.beginning_balance }}</td>
+                                            <td>{{ schedule.interest }}</td>
+                                            <td>{{ schedule.principal }}</td>
+                                            <td>{{ schedule.end_balance }}</td>
+                                            <td class="text-uppercase" v-if="loanApprovalStatus == 'approved'">
+                                                <span :class="`badge font-italic ${schedule.status}`">{{ schedule.status }}</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </perfect-scrollbar>
                         </div>
                     </div>
                 </div>
@@ -61,7 +65,11 @@
 </template>
 
 <script>
+    import { PerfectScrollbar } from 'vue3-perfect-scrollbar';
 export default {
+    components: {
+        PerfectScrollbar
+    },
     props: {
         schedules: {
             type: Object,
@@ -81,7 +89,26 @@ export default {
             type: Number,
             default: 0,
             required: true
+        },
+        loanApprovalStatus: {
+            type: String,
+            required: true,
+            default: 'pending'
         }
     },
 }
 </script>
+
+<style scoped>
+    .pending {
+        background: var(--bs-secondary);
+    }
+
+    .paid {
+        background: var(--bs-teal);
+    }
+
+    .rescheduled {
+        background: var(--bs-danger);
+    }
+</style>
