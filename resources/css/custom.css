@@ -1,1 +1,26 @@
 /* Add custom styles */
+/* Datatable overrides */
+.dataTables_wrapper {
+    margin-top: 10px;
+}
+.dataTables_wrapper .page-item .page-link, .page-item span{
+    border-radius: inherit !important;
+    width: auto;
+    min-width: 36px;
+    padding: 10px;
+}
+
+.dataTables_filter{
+    display: flex;
+    justify-content: end;
+    padding-right: 3%;
+}
+
+.dataTables_length, .dataTables_info{
+    padding-left: 1%;
+}
+
+
+.dataTables_wrapper .form-select {
+    width: 60px;
+}

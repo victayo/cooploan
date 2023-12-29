@@ -4,7 +4,10 @@ import $ from 'jquery';
 import axios from 'axios';
 import Choices from 'choices.js';
 import moment from 'moment';
-import DataTable from 'datatables.net-dt';
+import DataTable from 'datatables.net-bs5';
+import 'datatables.net-responsive-bs5';
+// import DataTable from 'datatables.net-dt';
+// import 'datatables.net-responsive-dt';
 
 
 window.PerfectScrollbar = PerfectScrollbar;
