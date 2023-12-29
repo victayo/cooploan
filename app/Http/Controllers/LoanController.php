@@ -134,9 +134,8 @@ class LoanController extends Controller
      */
     public function show(Request $request, Loan $loan)
     {
-        if($request->user()->cannot('view', $loan)){
-            abort(403);
-        }
+        $this->authorize('view', $loan);
+
         $loan = Loan::where('id', $loan->id)->first();
         $guarantors = LoanGuarantor::where('loan_id', $loan->id)->get();
         $user = auth()->user();

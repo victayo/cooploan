@@ -28,6 +28,7 @@ class UserController extends Controller
      * Returns view for all users
      */
     public function index(){
+        $this->authorize('viewAny', User::class);
         $users = User::all();
         return view("pages.users.index", [
             'users' => $users,
@@ -39,6 +40,9 @@ class UserController extends Controller
      */
     public function show($id){
         $user = User::where('mainone_id', $id)->first();
+
+        $this->authorize('view', $user);
+
         $employment = EmploymentDetails::where('mainone_id', $id)->first();
         $nok = NextOfKin::where('mainone_id', $id)->first();
         return view("pages.users.show", [
@@ -228,6 +232,10 @@ class UserController extends Controller
     }
 
     public function sendLink(Request $request){
+        if($request->user()->cannot('sendLink', User::class)){
+            abort(403);
+        }
+
         $validator = Validator::make($request->all(), [
             'email' => 'required|unique:users,email',
         ]);
