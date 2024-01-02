@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Mail\GuarantorRequest;
 use Illuminate\Support\Facades\Mail;
 
-class LoanService {
+class LoanService extends Service{
 
     public function notifyGuarantors($loanGuarantors){
         foreach($loanGuarantors as $loanGuarantor){

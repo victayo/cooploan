@@ -6,7 +6,7 @@ use App\Models\Loan;
 use App\Models\RepaymentSchedule;
 use Carbon\Carbon;
 
-class RepaymentScheduleService
+class RepaymentScheduleService extends Service
 {
     /**
      * @todo: Move these constants to Settings
