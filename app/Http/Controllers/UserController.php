@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\RegistrationLink;
 use App\Mail\UserRegistration;
 use App\Models\EmploymentDetails;
+use App\Models\Fee;
 use App\Models\NextOfKin;
 use App\Models\User;
 use Exception;
@@ -137,6 +138,13 @@ class UserController extends Controller
                 'email' => $request->post('nok_email'),
                 'phone' => $request->post('nok_phone'),
                 'address' => $request->post('nok_address')
+            ]);
+
+            // Create membership fee record
+            Fee::create([
+                'mainone_id' => $request->post('mainone_id'),
+                'membership_fee' => $this->membershipFee,
+                'type' => Fee::MEMBERSHIP_FEE
             ]);
             /**
              * @todo move to queue
