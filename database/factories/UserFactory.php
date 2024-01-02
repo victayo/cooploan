@@ -57,7 +57,6 @@ class UserFactory extends Factory
             'approval_status' => $approvalStatus,
             'status' => $status,
             'save_amount' => fake()->randomElement([5000, 10000, 30000, 50000, 300000, 5000000]),
-            'membership_fee' => 2000,
             'date_approved' => $dateApproved,
             'date_deactivated' => $dateDeactivated
         ];
