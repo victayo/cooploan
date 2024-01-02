@@ -7,16 +7,16 @@
             <div class="row gx-4">
                 <div class="col-auto">
                     <div class="avatar avatar-xl position-relative">
-                        <img src="/img/team-1.jpg" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
+                        <img src="https://ui-avatars.com/api/?name={{ auth()->user()->fullName }}&color=7F9CF5&background=EBF4FF" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
                     </div>
                 </div>
                 <div class="col-auto my-auto">
                     <div class="h-100">
                         <h5 class="mb-1">
-                            {{ auth()->user()->firstname ?? 'Firstname' }} {{ auth()->user()->lastname ?? 'Lastname' }}
+                            {{ auth()->user()->fullname }}
                         </h5>
                         <p class="mb-0 font-weight-bold text-sm">
-                            Public Relations
+                            {{ auth()->user()->employmentDetails->department }}, {{ auth()->user()->employmentDetails->job_title }}
                         </p>
                     </div>
                 </div>
@@ -137,7 +137,7 @@
                     </form>
                 </div>
             </div>
-            <div class="col-md-4">
+            {{-- <div class="col-md-4">
                 <div class="card card-profile">
                     <img src="/img/bg-profile.jpg" alt="Image placeholder" class="card-img-top">
                     <div class="row justify-content-center">
@@ -196,7 +196,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
         {{-- @include('layouts.footers.auth.footer') --}}
     </div>

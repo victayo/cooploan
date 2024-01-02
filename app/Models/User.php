@@ -87,6 +87,10 @@ class User extends Authenticatable
         return $this->attributes['firstname'] . " ".$this->attributes['lastname'];
     }
 
+    public function employmentDetails(){
+        return $this->hasOne(EmploymentDetails::class, 'mainone_id', 'mainone_id');
+    }
+
     public function wallet(){
         return $this->hasOne(Wallet::class, 'user_id', 'mainone_id');
     }

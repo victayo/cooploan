@@ -7,7 +7,7 @@
             <div class="row gx-4">
                 <div class="col-auto">
                     <div class="avatar avatar-xl position-relative">
-                        <img src="https://ui-avatars.com/api/?name={{$user->fullName}}&color=7F9CF5&background=EBF4FF" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
+                        <img src=" https://ui-avatars.com/api/?name={{$user->fullName}}&color=7F9CF5&background=EBF4FF" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
                     </div>
                 </div>
                 <div class="col-auto my-auto">
@@ -16,7 +16,7 @@
                             {{ $user->fullName }}
                         </h5>
                         <p class="mb-0 font-weight-bold text-sm">
-                            {{$employment->job_title ?? ''}}, {{$employment->department ?? ''}}
+                            {{$user->employmentDetails->job_title }}, {{$user->employmentDetails->department }}
                         </p>
                     </div>
                 </div>
