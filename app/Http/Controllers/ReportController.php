@@ -20,34 +20,6 @@ class ReportController extends Controller
     }
 
     public function index(){
-        return view('pages.reports.fees');
     }
-
-    public function membershipFee(Request $request){
-        $startDate = $request->query('start_date', now()->startOfYear()->toDateString());
-        $endDate = $request->query('end_date', Carbon::parse($startDate)->endOfYear()->toDateString());
-
-        if(Carbon::parse($startDate)->greaterThan($endDate)){
-            abort(Response::HTTP_BAD_REQUEST, 'Start Date cannot be greater than End Date');
-        }
-
-        $report = $this->reportService->getFeesReport($startDate, $endDate, Fee::MEMBERSHIP_FEE);
-
-        return response()->json(['report' => $report]);
-    }
-
-    public function loanProcessingFee(Request $request){
-        $startDate = $request->query('start_date', now()->startOfYear()->toDateString());
-        $endDate = $request->query('end_date', Carbon::parse($startDate)->endOfYear()->toDateString());
-
-        if(Carbon::parse($startDate)->greaterThan($endDate)){
-            abort(Response::HTTP_BAD_REQUEST, 'Start Date cannot be greater than End Date');
-        }
-
-        $report = $this->reportService->getFeesReport($startDate, $endDate, Fee::LOAN_PROCESSING_FEE);
-
-        return response()->json(['report' => $report]);
-    }
-
 
 }
