@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Reports;
 
+use App\Http\Controllers\Controller;
 use App\Models\Fee;
 use App\Services\ReportService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class ReportController extends Controller
+class FeesController extends Controller
 {
     /**
      * @var ReportService
@@ -48,6 +49,4 @@ class ReportController extends Controller
 
         return response()->json(['report' => $report]);
     }
-
-
 }

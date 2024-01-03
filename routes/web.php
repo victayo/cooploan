@@ -26,6 +26,8 @@ use App\Http\Controllers\ResetPassword;
 use App\Http\Controllers\ChangePassword;
 use App\Http\Controllers\GuarantorController;
 use App\Http\Controllers\LoanController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\Reports\FeesController;
 use App\Http\Controllers\UserController;
 
 Route::get('/', function () {return redirect('/dashboard');})->middleware('auth');
@@ -72,6 +74,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::controller(GuarantorController::class)->prefix('guarantor')->group(function(){
         Route::get('/', 'index')->name('guarantors.index');
         Route::post('/guarantor/{id}', 'show')->name('guarantor.show');
+    });
+
+    Route::controller(FeesController::class)->prefix('fees')->group(function(){
+        Route::get('/', 'index')->name('fees.index');
     });
 
 

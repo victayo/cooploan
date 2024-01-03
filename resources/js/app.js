@@ -12,10 +12,11 @@ import { createApp } from 'vue';
 const app = createApp({});
 
 import UserSummaryComponent from './components/UserSummaryComponent.vue';
-import NewLoanComponent from './components/loan/NewLoanComponent.vue'
-import PaymentScheduleComponent from './components/loan/PaymentScheduleComponent.vue'
-import WalletComponent from './components/Dashboard/WalletComponent.vue'
-import UserlistComponent from './components/User/UserlistComponent.vue'
+import NewLoanComponent from './components/loan/NewLoanComponent.vue';
+import PaymentScheduleComponent from './components/loan/PaymentScheduleComponent.vue';
+import WalletComponent from './components/Dashboard/WalletComponent.vue';
+import UserlistComponent from './components/User/UserlistComponent.vue';
+import FeesComponent from './components/Report/FeesComponent.vue';
 
 
 app.component('user-summary', UserSummaryComponent);
@@ -23,6 +24,7 @@ app.component('new-loan', NewLoanComponent);
 app.component('wallet', WalletComponent);
 app.component('payment-schedule', PaymentScheduleComponent);
 app.component('user-list', UserlistComponent);
+app.component('fees', FeesComponent);
 
 /**
  * The following block of code may be used to automatically register your

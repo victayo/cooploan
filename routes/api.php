@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\GuarantorController;
 use App\Http\Controllers\LoanController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\Reports\FeesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -32,5 +34,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::controller(GuarantorController::class)->prefix('guarantor')->group(function(){
         Route::post('/approve/{id}', 'approve')->name('guarantor.approve');
         Route::post('/reject/{id}', 'reject')->name('guarantor.reject');
+    });
+
+    Route::controller(FeesController::class)->prefix('fees')->group(function(){
+        Route::get('/membershipfee', 'membershipFee')->name('fees.membershipfee');
+        Route::get('/processingfee', 'loanProcessingFee')->name('fees.processingfee');
     });
 });
