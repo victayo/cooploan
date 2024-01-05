@@ -40,7 +40,7 @@ class UserController extends Controller
      * Shows a user
      */
     public function show($id){
-        $user = User::where('mainone_id', $id)->first();
+        $user = User::with(['employmentDetails', 'nextOfKin'])->where('mainone_id', $id)->first();
 
         $this->authorize('view', $user);
 
@@ -184,18 +184,18 @@ class UserController extends Controller
                 'city' => 'required|string',
                 'address' => 'required|string',
 
-                'resumption_date' => 'required|date',
-                'department' => 'required|string',
-                'job_title' => 'required|string',
+                'employment_details.resumption_date' => 'required|date',
+                'employment_details.department' => 'required|string',
+                'employment_details.job_title' => 'required|string',
 
                 'save_amount' => "required|numeric|min:$this->minAmountToSave",
 
-                'nok_firstname' => 'required|string',
-                'nok_lastname' => 'required|string',
-                'nok_dob' => 'required',
-                'nok_email' => 'required|email',
-                'nok_phone' => 'required|string',
-                'nok_address' => 'required|string'
+                'next_of_kin.firstname' => 'required|string',
+                'next_of_kin.lastname' => 'required|string',
+                'next_of_kin.dob' => 'required',
+                'next_of_kin.email' => 'required|email',
+                'next_of_kin.phone' => 'required|string',
+                'next_of_kin.address' => 'required|string'
             ]);
 
             User::where('mainone_id', $id)->update([
@@ -214,20 +214,30 @@ class UserController extends Controller
                 'save_amount' => $request->post('save_amount')
             ]);
 
-
+            $employmentDetails = $request->post('employment_details');
+            $nok = $request->post('next_of_kin');
             EmploymentDetails::where('mainone_id', $id)->update([
-                'mainone_id' => $request->post('mainone_id'),
-                'department' => $request->post('department'),
-                'resumption_date' => $request->post('resumption_date'),
-                'job_title' => $request->post('job_title')
+                'department' => $employmentDetails['department'],
+                'resumption_date' => $employmentDetails['resumption_date'],
+                'job_title' => $employmentDetails['job_title']
+            ]);
+            NextOfKin::where('mainone_id', $id)->update([
+                'firstname' => $nok['firstname'],
+                'lastname' => $nok['lastname'],
+                'dob' => $nok['dob'],
+                'email' => $nok['email'],
+                'address' => $nok['address'],
+                'phone' => $nok['phone']
             ]);
 
             DB::commit();
-            return redirect()->route('users.show', $id)->with('success', 'Successfully updated user');
+            // return redirect()->route('users.show', $id)->with('success', 'Successfully updated user');
+            return response()->json(['success' => true]);
         }catch(Exception $exception){
             report($exception);
             DB::rollBack();
-            return redirect()->route('users.show', $id)->with('error', $exception->getMessage());
+            // return redirect()->route('users.show', $id)->with('error', $exception->getMessage());
+            return response()->json(['success' => false, 'message' => $exception->getMessage()]);
         }
     }
 

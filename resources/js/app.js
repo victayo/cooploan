@@ -11,20 +11,30 @@ import { createApp } from 'vue';
 
 const app = createApp({});
 
+import VueSweetalert2 from 'vue-sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
+
 import UserSummaryComponent from './components/UserSummaryComponent.vue';
 import NewLoanComponent from './components/loan/NewLoanComponent.vue';
 import PaymentScheduleComponent from './components/loan/PaymentScheduleComponent.vue';
 import WalletComponent from './components/Dashboard/WalletComponent.vue';
-import UserlistComponent from './components/User/UserlistComponent.vue';
-import FeesComponent from './components/Report/FeesComponent.vue';
 
+import UserlistComponent from './components/User/UserlistComponent.vue';
+import ViewUserComponent from './components/User/ViewUserComponent.vue';
+import UserBadgeComponent from './components/User/UserBadgeComponent.vue';
+
+import FeesComponent from './components/Report/FeesComponent.vue';
 
 app.component('user-summary', UserSummaryComponent);
 app.component('new-loan', NewLoanComponent);
 app.component('wallet', WalletComponent);
 app.component('payment-schedule', PaymentScheduleComponent);
 app.component('user-list', UserlistComponent);
+app.component('view-user', ViewUserComponent);
+app.component('user-badge', UserBadgeComponent);
 app.component('fees', FeesComponent);
+
+app.use(VueSweetalert2);
 
 /**
  * The following block of code may be used to automatically register your

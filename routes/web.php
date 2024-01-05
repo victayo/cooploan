@@ -56,7 +56,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/', 'store')->name('users.store');
         Route::get('/{user}', 'show')->name('users.show');
         Route::get('/{user}/edit', 'edit')->name('users.edit');
-        Route::post('/{user}/edit', 'update')->name('users.update');
         Route::post('/sendlink', 'sendLink')->name('users.sendlink');
         Route::delete('/{user}', 'delete')->name('users.delete');
     });
