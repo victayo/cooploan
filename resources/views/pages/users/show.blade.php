@@ -18,8 +18,19 @@
                         <p class="mb-0 font-weight-bold text-sm">
                             {{$user->employmentDetails->job_title }}, {{$user->employmentDetails->department }}
                         </p>
+                        <p class="mb-0 font-weight-bold text-sm text-dark font-italic text-capitalize">
+                            {{$user->status }}
+                        </p>
                     </div>
                 </div>
+                @if ($user->status == 'pending')
+                    <div class="col-lg-4 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
+                        <div class="btn-group position-relative end-0">
+                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#approveModal">Approve</button>
+                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#declineModal">Decline</button>
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
@@ -33,9 +44,11 @@
                     <form role="form" method="POST" action={{ route('users.update', $user->mainone_id) }}>
                         @csrf
                         <div class="card-header pb-0">
-                            <div class="d-flex align-items-center">
-                                <p class="mb-0">Edit Profile</p>
-                                <button type="submit" class="btn btn-primary btn-sm ms-auto">Save</button>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <p class="mb-0"></p>
+                                <div class="btn-group">
+                                    <button type="submit" class="btn btn-primary btn-sm ms-auto">Save</button>
+                                </div>
                             </div>
                         </div>
                         <div class="card-body">
@@ -283,4 +296,51 @@
             </div>
         </div>
     </div>
+
+      <!-- Approve profile modal -->
+<div class="modal fade" id="approveModal" tabindex="-1" aria-labelledby="modal1Label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal1Label">Approve Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Approve</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Decline profile modal -->
+<div class="modal fade" id="declineModal" tabindex="-1" aria-labelledby="modal2Label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal2Label">Decline Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Decline</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
+
+@push('js')
+    <script>
+        window.user = @json(auth()->user());
+        console.log(window.user);
+    </script>
+@endpush
+

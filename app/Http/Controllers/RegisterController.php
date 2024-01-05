@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 // use App\Http\Requests\RegisterRequest;
 
 use App\Models\EmploymentDetails;
+use App\Models\Fee;
 use App\Models\NextOfKin;
 use App\Models\User;
 use Exception;
@@ -47,7 +48,7 @@ class RegisterController extends Controller
          * Validate the signature of the previous request.
          */
         if(!URL::hasValidSignature($prevRequest)){
-            abort(410);
+            abort(410, 'Invalid/Expired Registration Link');
         };
         $attributes = $request->validate([
             'mainone_id' => 'required|unique:users,mainone_id',
@@ -104,11 +105,11 @@ class RegisterController extends Controller
                 'phone' => $request->post('phone'),
                 'country' => $request->post('country'),
                 'state' => $request->post('state'),
+                'status' => User::PENDING,
                 'city' => $request->post('city'),
                 'address' => $request->post('address'),
                 'password' => $request->post('password'),
                 'save_amount' => $request->post('save_amount'),
-                'membership_fee' => $this->membershipFee
             ]);
 
             // save employment details
@@ -131,6 +132,12 @@ class RegisterController extends Controller
                 'address' => $request->post('nok_address')
             ]);
 
+            // Create membership fee record
+            Fee::create([
+                'mainone_id' => $request->post('mainone_id'),
+                'fee' => $this->membershipFee,
+                'type' => Fee::MEMBERSHIP_FEE
+            ]);
 
 
             DB::commit();

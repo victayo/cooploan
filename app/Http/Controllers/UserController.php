@@ -117,8 +117,7 @@ class UserController extends Controller
                 'city' => $request->post('city'),
                 'address' => $request->post('address'),
                 'password' => $password,
-                'save_amount' => $request->post('save_amount'),
-                'membership_fee' => $this->membershipFee
+                'save_amount' => $request->post('save_amount')
             ]);
 
             // save employment details
@@ -143,7 +142,7 @@ class UserController extends Controller
             // Create membership fee record
             Fee::create([
                 'mainone_id' => $request->post('mainone_id'),
-                'membership_fee' => $this->membershipFee,
+                'fee' => $this->membershipFee,
                 'type' => Fee::MEMBERSHIP_FEE
             ]);
             /**
@@ -264,7 +263,7 @@ class UserController extends Controller
          */
         Mail::to($email)->send(new RegistrationLink($url));
 
-        return redirect()->route('users.index')->with('success', 'Link successfully send to user');
+        return redirect()->route('users.index')->with('success', 'Link successfully sent to user');
 
     }
 }

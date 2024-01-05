@@ -183,7 +183,7 @@
                                                 <div class="col-12">
                                                     <label class="form-label">Address</label>
                                                     <div class="input-group">
-                                                        <textarea rows="3" name="address" class="form-control @error('address') is-invalid @enderror" value="{{ old('address') }}"></textarea>
+                                                        <textarea rows="3" name="address" class="form-control @error('address') is-invalid @enderror" value="{{ old('address') }}" required></textarea>
                                                         @error('address')
                                                             <div class="invalid-feedback" required>
                                                                 {{$message}}

@@ -85,7 +85,7 @@ export default {
                         let content = `<div class="d-flex px-3 py-1 justify-content-center align-items-center">
                                     <p class="text-sm font-weight-bold mb-0">
                                         <a class="btn bg-gradient-primary btn-sm m-0 ms-2" href="/users/${row.mainone_id}">
-                                            <i class="fa fa-pen" data-bs-toggle="tooltip" data-bs-placement="top" title="View User"
+                                            <i class="fa fa-eye" data-bs-toggle="tooltip" data-bs-placement="top" title="View User"
                                                 aria-hidden="true" data-bs-original-title="View User" aria-label="View User"></i>
                                         </a>
                                     </p>
