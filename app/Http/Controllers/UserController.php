@@ -139,12 +139,6 @@ class UserController extends Controller
                 'address' => $request->post('nok_address')
             ]);
 
-            // Create membership fee record
-            Fee::create([
-                'mainone_id' => $request->post('mainone_id'),
-                'fee' => $this->membershipFee,
-                'type' => Fee::MEMBERSHIP_FEE
-            ]);
             /**
              * @todo move to queue
              */
@@ -242,12 +236,58 @@ class UserController extends Controller
     }
 
     /**
-     * Deletes a user
+     * This approves a pending user
      */
-    public function delete($id){
-
+    public function approve($user){
+        User::where('mainone_id', $user)->update([
+            'status' => User::ACTIVE,
+            'date_approved' => now()
+        ]);
+        // Create membership fee record for approved user
+        Fee::create([
+            'mainone_id' => $user,
+            'fee' => $this->membershipFee,
+            'type' => Fee::MEMBERSHIP_FEE
+        ]);
+        return response()->json(['success' => true]);
     }
 
+    /**
+     * This activates a user. This is for user's that have been deactivated
+     */
+    public function activate($user){
+        User::where('mainone_id', $user)->update(['status' => User::ACTIVE]);
+        // Create membership fee record for reactivated user
+        Fee::create([
+            'mainone_id' => $user,
+            'fee' => $this->membershipFee * 2, //Membership fee is double for reactivated user
+            'type' => Fee::MEMBERSHIP_FEE
+        ]);
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * This declines a user registration request
+     */
+    public function decline($user){
+        User::where('mainone_id', $user)->update(['status' => User::DECLINED]);
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * This deactivates a user
+     */
+    public function deactivate($user){
+        User::where('mainone_id', $user)->update([
+            'status' => User::INACTIVE,
+            'date_deactivated' => now()
+        ]);
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Sends registration link to a new user
+     */
     public function sendLink(Request $request){
         if($request->user()->cannot('sendLink', User::class)){
             abort(403);

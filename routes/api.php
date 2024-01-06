@@ -26,6 +26,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::controller(UserController::class)->prefix('users')->group(function(){
         Route::post('/{user}/edit', 'update')->name('users.update');
+        Route::post('/{user}/approve', 'approve')->name('users.approve');
+        Route::post('/{user}/decline', 'decline')->name('users.decline');
+        Route::post('/{user}/activate', 'activate')->name('users.activate');
+        Route::post('/{user}/deactivate', 'deactivate')->name('users.deactivate');
     });
 
     Route::controller(LoanController::class)->prefix('loans')->group(function(){

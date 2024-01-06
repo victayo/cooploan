@@ -20,12 +20,7 @@ class UserFactory extends Factory
     {
         $gender = fake()->randomElement(['male', 'female']);
         $mainoneID = fake()->unique()->regexify('^MOSN[0-9]{1,4}$');
-        $approvalStatus = fake()->randomElement([User::APPROVED, User::APPROVED, User::APPROVED, User::APPROVED, User::DECLINED, User::PENDING]);
-        if($approvalStatus == User::PENDING || $approvalStatus == User::DECLINED){
-            $status = User::PENDING;
-        }else{
-            $status = fake()->randomElement([User::ACTIVE, User::ACTIVE, User::ACTIVE, User::ACTIVE, User::INACTIVE]);
-        }
+        $status = fake()->randomElement([User::ACTIVE, User::ACTIVE, User::PENDING, User::PENDING, User::DECLINED, User::INACTIVE]);
 
         $dateApproved = null;
         $dateDeactivated = null;
@@ -54,7 +49,6 @@ class UserFactory extends Factory
             'state' => fake()->streetName(),
             'country' => 'Nigeria',
             'gender' => $gender,
-            'approval_status' => $approvalStatus,
             'status' => $status,
             'save_amount' => fake()->randomElement([5000, 10000, 30000, 50000, 300000, 5000000]),
             'date_approved' => $dateApproved,

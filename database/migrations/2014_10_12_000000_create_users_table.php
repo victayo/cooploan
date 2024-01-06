@@ -28,8 +28,7 @@ return new class extends Migration
             $table->string('state', 50);
             $table->string('country', 50);
             $table->string('gender', 10);
-            $table->string('approval_status', 10)->default('pending');
-            $table->string('status', 10)->default('active');
+            $table->string('status', 10)->default('pending');
             $table->decimal('save_amount', 13, 2);
             $table->decimal('membership_fee');
             $table->timestamp('date_approved')->nullable();

@@ -57,7 +57,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/{user}', 'show')->name('users.show');
         Route::get('/{user}/edit', 'edit')->name('users.edit');
         Route::post('/sendlink', 'sendLink')->name('users.sendlink');
-        Route::delete('/{user}', 'delete')->name('users.delete');
     });
 
     Route::controller(LoanController::class)->prefix('loans')->group(function(){

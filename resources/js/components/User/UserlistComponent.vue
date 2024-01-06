@@ -64,6 +64,7 @@ export default {
                                 label = 'badge-success';
                                 break;
                             case 'inactive':
+                            case 'declined':
                                 label = 'badge-danger';
                                 break;
                             case 'pending':
