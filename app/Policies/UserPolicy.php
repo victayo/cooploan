@@ -39,6 +39,10 @@ class UserPolicy
         return $user->isAdmin();
     }
 
+    public function updateStatus(User $user): bool{
+        return $user->isAdmin();
+    }
+
     /**
      * Determine whether the user can update the model.
      */

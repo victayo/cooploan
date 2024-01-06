@@ -239,6 +239,7 @@ class UserController extends Controller
      * This approves a pending user
      */
     public function approve($user){
+        $this->authorize('updateStatus', auth()->user());
         User::where('mainone_id', $user)->update([
             'status' => User::ACTIVE,
             'date_approved' => now()
@@ -256,6 +257,8 @@ class UserController extends Controller
      * This activates a user. This is for user's that have been deactivated
      */
     public function activate($user){
+        $this->authorize('updateStatus', auth()->user());
+
         User::where('mainone_id', $user)->update(['status' => User::ACTIVE]);
         // Create membership fee record for reactivated user
         Fee::create([
@@ -270,6 +273,8 @@ class UserController extends Controller
      * This declines a user registration request
      */
     public function decline($user){
+        $this->authorize('updateStatus', auth()->user());
+
         User::where('mainone_id', $user)->update(['status' => User::DECLINED]);
         return response()->json(['success' => true]);
     }
@@ -278,6 +283,8 @@ class UserController extends Controller
      * This deactivates a user
      */
     public function deactivate($user){
+        $this->authorize('updateStatus', auth()->user());
+
         User::where('mainone_id', $user)->update([
             'status' => User::INACTIVE,
             'date_deactivated' => now()
