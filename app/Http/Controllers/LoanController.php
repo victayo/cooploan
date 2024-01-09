@@ -7,6 +7,7 @@ use App\Models\Loan;
 use App\Models\LoanGuarantor;
 use App\Models\Tenure;
 use App\Models\User;
+use App\Services\LoanService;
 use App\Services\RepaymentScheduleService;
 use Exception;
 use Illuminate\Http\Request;
@@ -19,6 +20,16 @@ class LoanController extends Controller
      * @var RepaymentScheduleService
      */
     private $repaymentScheduleService;
+
+    /**
+     * @var LoanService
+     */
+    private $loanService;
+
+    public function __construct(LoanService $loanService)
+    {
+        $this->loanService = $loanService;
+    }
     /**
      * Display a listing of the resource.
      */
@@ -30,13 +41,11 @@ class LoanController extends Controller
             $loans = Loan::where('user_id', auth()->user()->mainone_id)->get();
         }
 
-        $activeLoan = Loan::where([
-            'user_id' => $request->user()->mainone_id,
-        ])->whereIn('status', [Loan::ACTIVE, Loan::PENDING])->count();
+        $activeLoan = $this->loanService->hasActiveLoan($request->user());
 
         return view('pages.loans.index', [
             'loans' => $loans,
-            'hasActive' => $activeLoan > 0 // A user should not be able to request a new loan if there's an active or pending loan request
+            'hasActive' => $activeLoan // A user should not be able to request a new loan if there's an active or pending loan request
         ]);
     }
 
@@ -46,6 +55,9 @@ class LoanController extends Controller
     public function create()
     {
         $user = auth()->user();
+        if($this->loanService->hasActiveLoan($user)){ //user has active loan. Redirect to loans page
+            return redirect('/loans');
+        }
         $users = User::with('wallet')
         ->where('mainone_id', '!=', $user->mainone_id)
         ->where('status', User::ACTIVE)
@@ -121,11 +133,11 @@ class LoanController extends Controller
             /**
              * @todo Notify guarantors
              */
-            return response()->json(['status' => 'success', 'loan' => $loan, 'loan_guarantors' => $loanGuarantors]);
+            return response()->json(['success' => true, 'loan' => $loan, 'loan_guarantors' => $loanGuarantors]);
         }catch(Exception $exception){
             DB::rollBack();
             report($exception);
-            return response()->json(['status' => 'failure', 'msg' => $exception->getMessage()], 200);
+            return response()->json(['success' => false, 'msg' => $exception->getMessage()], 200);
         }
     }
 

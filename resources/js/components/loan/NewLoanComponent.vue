@@ -1,20 +1,26 @@
 <template>
     <div>
         <div class="card mt-4">
+            <div class="card-header d-flex justify-content-end">
+                <div class="btn-group" v-if="loan.id">
+                    <button class="btn btn-info" @click="doEdit()" v-if="isView()">Edit</button>
+                    <button class="btn btn-primary" @click="doView()" v-else>View</button>
+                </div>
+            </div>
             <div class="card-body pt-0">
                 <form @submit.prevent="onSubmit" :disabled="action != 'view'">
                     <div class="row">
                         <div class="col-sm-12 col-md-6">
                             <label class="form-label mt-md-4" for="loan_amount">Loan Amount</label>
                             <div class="input-group">
-                                <input id="loan_amount" name="amount" class="form-control" type="number"
+                                <input id="loan_amount" name="amount" class="form-control" type="number" :disabled="isView()"
                                     v-model="loan.loan_amount" required>
                             </div>
                         </div>
                         <div class="col-sm-12 col-md-6">
                             <label class="form-label mt-md-4" for="tenure">Tenure (months)</label>
                             <div class="input-group">
-                                <select id="tenure" name="tenure" class="form-control" v-model="loan.tenure" required>
+                                <select id="tenure" name="tenure" class="form-control" v-model="loan.tenure" :disabled="isView()" required>
                                     <option value="">Select Tenure</option>
                                     <option v-for="tenure in tenures" :value="tenure.tenure">{{ tenure.tenure }} ({{
                                         tenure.interest }}%)</option>
@@ -25,7 +31,7 @@
 
                     <fieldset class="mt-4 p-3">
                         <legend>Guarantors</legend>
-                        <div class="d-flex justify-content-end" v-if="action != 'view'">
+                        <div class="d-flex justify-content-end" v-if="!isView()">
                             <button class="btn bg-gradient-primary btn-sm" @click.stop.prevent="addGuarantor">
                                 <i class="fa fa-plus"></i>
                             </button>
@@ -35,7 +41,7 @@
                                 <div class="col-4">
                                     <label class="form-label" :for="'guarantor-' + index">Guarantor</label>
                                     <div class="input-group">
-                                        <select :id="'guarantor-' + index" :name="'guarantor-' + index" class="form-control"
+                                        <select :id="'guarantor-' + index" :name="'guarantor-' + index" class="form-control guarantorSelect"
                                             v-model="guarantor.guarantor_id" required
                                             :disabled="guarantor.status && guarantor.status != 'pending'">
                                             <option value="">Select Guarantor</option>
@@ -56,7 +62,7 @@
                                     <span :class="`badge font-italic ${guarantor.status}`">{{ guarantor.status }}</span>
                                 </div>
                                 <div class="col-auto btn-container"
-                                    v-if="guarantor.status && (guarantor.status == 'pending' || guarantor.status == 'rejected') && action != 'view'">
+                                    v-if="guarantor.status && (guarantor.status == 'pending') && action != 'view'">
                                     <button class="btn bg-gradient-danger btn-sm"
                                         @click.stop.prevent="removeGuarantor(index)">
                                         <i class="fa fa-trash"></i>
@@ -91,8 +97,8 @@
                                 :disabled="!loan.loan_amount || !loan.tenure">Preview Repayment Schedule</button>
                         </div>
                         <div class="d-flex justify-content-end">
-                            <a class="btn btn-sm bg-gradient-danger ms-2" href="/loans">Cancel</a>
-                            <button type="submit" class="btn btn-sm bg-gradient-primary ms-2">Save</button>
+                            <a class="btn btn-sm bg-gradient-danger ms-2" href="/loans" :disabled="saving">Cancel</a>
+                            <button type="submit" class="btn btn-sm bg-gradient-primary ms-2" :disabled="saving">Save</button>
                         </div>
                     </div>
 
@@ -107,7 +113,6 @@
 </template>
 
 <script>
-
 export default {
     props: {
         users: {
@@ -132,10 +137,6 @@ export default {
             type: Array,
             required: false,
             default: []
-        },
-        action: {
-            type: String,
-            required: true
         }
     },
 
@@ -143,6 +144,7 @@ export default {
         return {
             loan: _.cloneDeep(this.initialLoan),
             guarantors: _.cloneDeep(this.initialGuarantors),
+            action: 'view',
             removeGuarantors: [],
             schedules: {
                 schedule: [],
@@ -154,6 +156,7 @@ export default {
             monthlyPayment: 0,
             loanEffectiveDate: this.initialLoan.effective_date ? this.initialLoan.effective_date : moment().format('YYYY-MM-DD'),
             fetchingSchedule: false,
+            saving: false
         }
     },
 
@@ -170,30 +173,71 @@ export default {
                 guarantor_id: '',
                 amount: 0,
                 status: 'pending'
-            }
-            );
+            });
         },
 
         removeGuarantor(index) {
             let guarantor = this.guarantors[index];
             if (guarantor.id) {
-                if (window.confirm('Are you sure you want to remove this Guarantor?')) {
-                    this.removeGuarantors.push(guarantor.id);
-                }
+                this.$swal.fire({
+                    text: 'Are you sure you want to remove this Guarantor?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'Cancel'
+                }).then(response => {
+                    if(response.isConfirmed){
+                        this.removeGuarantors.push(guarantor.id);
+                        this.guarantors.splice(index, 1);
+                    }
+                });
+            }else{
+                this.guarantors.splice(index, 1);
             }
-            this.guarantors.splice(index, 1);
+        },
+
+        isView(){
+            return this.action == 'view' && this.loan.status == 'pending';
+        },
+
+        doEdit(){
+            this.action = 'edit';
+        },
+
+        doView(){
+            this.action = 'view';
         },
 
         onSubmit() {
+            this.saving = true;
             axios.post('/api/loans', {
                 guarantors: this.guarantors,
                 loan: this.loan,
                 remove: this.removeGuarantors
             }).then((response) => {
                 let data = response.data;
-                console.log(data);
+                if(data.success){
+                    this.$swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        text: `Loan successfully created`,
+                        showConfirmButton: false,
+                        icon: 'success',
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didClose: () => {
+                            window.location = '/loans';
+                        }
+                    });
+                    this.loan = data.loan;
+                    this.guarantors = data.loan_guarantors;
+                }else{
+
+                }
             }).catch((err) => {
                 console.log(err);
+            }).finally(() => {
+                this.saving = false;
             })
         },
 
@@ -245,7 +289,9 @@ export default {
         totalGuarantorAmount() {
             let sum = 0;
             this.guarantors.forEach(guarantor => {
-                sum += (+guarantor.amount);
+                if(guarantor.status == 'pending' || guarantor.status == 'approved'){// only calculate total for pending and approved guarantee
+                    sum += (+guarantor.amount);
+                }
             });
             return sum;
         },

@@ -60,11 +60,11 @@
                                                         <i class="fa fa-eye" data-bs-toggle="tooltip" data-bs-placement="top" title="" aria-hidden="true" data-bs-original-title="View Loan" aria-label="View Loan"></i>
                                                     </a>
                                                 </p>
-                                                <p class="text-sm font-weight-bold mb-0 ps-2">
+                                                {{-- <p class="text-sm font-weight-bold mb-0 ps-2">
                                                     <a class="btn btn-info btn-sm m-0 ms-2" href="{{route('loans.edit', $loan->id)}}">
                                                         <i class="fa fa-pen text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="" aria-hidden="true" data-bs-original-title="Edit Loan" aria-label="Edit Loan"></i>
                                                     </a>
-                                                </p>
+                                                </p> --}}
                                             </div>
                                         </td>
                                     </tr>

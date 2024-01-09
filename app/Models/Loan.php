@@ -23,7 +23,7 @@ class Loan extends Model
         if($this->attributes['date_approved']){
             return Carbon::parse($this->attributes['date_approved']);
         }
-        return '';
+        return null;
     }
 
     public function guarantors(){
