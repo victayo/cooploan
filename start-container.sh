@@ -16,6 +16,13 @@ composer install
 echo "Running npm install"
 npm i
 
+if ["$APP_ENV" == "production"]; then
+    npm run build
+else
+    echo "Running npm for dev"
+    npm run dev &
+fi
+
 if [ $# -gt 0 ]; then
     exec gosu $WWWUSER "$@"
 else
